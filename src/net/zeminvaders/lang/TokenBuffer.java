@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008 Cameron Zemek
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,7 +26,7 @@ import java.util.LinkedList;
 /**
  * Buffer of Tokens. Used to provide lookahead into the stream from the lexer.
  * Also filters out comment tokens.
- * 
+ *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 public class TokenBuffer {

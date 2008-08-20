@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008 Cameron Zemek
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,8 +23,8 @@ package net.zeminvaders.lang.runtime;
 
 /**
  *
- * 
- * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a> 
+ *
+ * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 final public class ZemString extends ZemObject {
     private String value;
