@@ -223,7 +223,7 @@ public class Lexer {
     private Token matchLineComment() {
         SourcePosition pos = new SourcePosition(lineNo, columnNo);
         match("//");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int character = lookAhead(1);
         while (character != '\r' && character != '\n' && character != END_OF_FILE) {
             sb.append((char) character);
@@ -235,7 +235,7 @@ public class Lexer {
     private Token matchBlockComment() {
         SourcePosition pos = new SourcePosition(lineNo, columnNo);
         match("/*");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int character = lookAhead(1);
         while (true) {
             if (character == END_OF_FILE) {
@@ -253,7 +253,7 @@ public class Lexer {
 
     private Token matchNumber() {
         SourcePosition pos = new SourcePosition(lineNo, columnNo);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         boolean decimal = false;
         int character = lookAhead(1);
         while ((character >= '0' && character <= '9') || character == '.') {
@@ -275,7 +275,7 @@ public class Lexer {
      */
     private Token matchIdentifier() {
         SourcePosition pos = new SourcePosition(lineNo, columnNo);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int character = lookAhead(1);
         while ((character >= 'a' && character <= 'z') ||
                 (character >= 'A' && character <= 'Z') ||
@@ -311,7 +311,7 @@ public class Lexer {
     private Token matchStringLiteral(char quote) {
         SourcePosition pos = new SourcePosition(lineNo, columnNo);
         match(quote);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int character = lookAhead(1);
         while (character != quote && character != END_OF_FILE) {
             sb.append((char) character);

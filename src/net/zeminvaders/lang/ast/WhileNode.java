@@ -57,7 +57,7 @@ public class WhileNode extends Node {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append('(');
         sb.append("while ");
         sb.append(testCondition);

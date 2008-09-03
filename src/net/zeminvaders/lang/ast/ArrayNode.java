@@ -51,7 +51,7 @@ public class ArrayNode extends Node {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("'(");
         for (Node node : elements) {
             sb.append(node);

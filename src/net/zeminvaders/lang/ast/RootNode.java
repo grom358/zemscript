@@ -35,7 +35,7 @@ public class RootNode extends BlockNode {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Node node : getStatements()) {
             sb.append(node.toString());
         }

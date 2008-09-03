@@ -56,7 +56,7 @@ public class FunctionCallNode extends Node {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append('(');
         sb.append(functionName);
         for (Node arg : arguments) {

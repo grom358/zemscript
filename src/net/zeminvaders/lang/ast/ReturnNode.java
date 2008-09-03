@@ -44,7 +44,7 @@ public class ReturnNode extends Node {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("(return ");
         sb.append(expression);
         sb.append(')');

@@ -54,7 +54,7 @@ public class DictionaryNode extends Node {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("(dict ");
         for (DictionaryEntryNode node : elements) {
             sb.append(node);

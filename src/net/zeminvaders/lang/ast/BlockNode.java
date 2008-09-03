@@ -57,7 +57,7 @@ public class BlockNode extends Node {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append('(');
         for (Node node : statements) {
             sb.append(node.toString());

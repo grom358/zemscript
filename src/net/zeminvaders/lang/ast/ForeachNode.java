@@ -72,7 +72,7 @@ public class ForeachNode extends Node {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append('(');
         sb.append("foreach ");
         sb.append(onVariableNode);
