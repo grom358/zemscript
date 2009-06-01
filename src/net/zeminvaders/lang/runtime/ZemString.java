@@ -50,6 +50,11 @@ final public class ZemString extends ZemObject {
     }
 
     @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
     public boolean equals(Object object) {
         return compareTo((ZemObject) object) == 0;
     }

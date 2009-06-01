@@ -71,10 +71,19 @@ final public class ZemNumber extends ZemObject {
         return new ZemNumber(value.negate());
     }
 
+    public int intValue() {
+        return value.intValue();
+    }
+
     public int compareTo(ZemObject object) {
         checkTypes(this, object);
         ZemNumber number = (ZemNumber) object;
         return value.compareTo(number.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 
     @Override

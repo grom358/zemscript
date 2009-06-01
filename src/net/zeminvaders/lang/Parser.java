@@ -44,6 +44,7 @@ import net.zeminvaders.lang.ast.Node;
 import net.zeminvaders.lang.ast.IfNode;
 import net.zeminvaders.lang.ast.LessEqualOpNode;
 import net.zeminvaders.lang.ast.LessThenOpNode;
+import net.zeminvaders.lang.ast.LookupNode;
 import net.zeminvaders.lang.ast.ModOpNode;
 import net.zeminvaders.lang.ast.MultiplyOpNode;
 import net.zeminvaders.lang.ast.NegateOpNode;
@@ -122,7 +123,7 @@ public class Parser {
             match(TokenType.END_STATEMENT);
             return funcCall;
         } else if (type == TokenType.VARIABLE) {
-            VariableNode var = new VariableNode(match(TokenType.VARIABLE).getText());
+            Node var = variable();
             match(TokenType.ASSIGN);
             Node value = expression();
             match(TokenType.END_STATEMENT);
@@ -390,7 +391,7 @@ public class Parser {
         // NUMBER
         // | TRUE | FALSE
         // | LPAREN^ sumExpr RPAREN!
-        // | VARIABLE
+        // | variable
         TokenType type = lookAhead(1);
         if (type == TokenType.NUMBER) {
             return new NumberNode(match(TokenType.NUMBER).getText());
@@ -406,7 +407,19 @@ public class Parser {
             match(TokenType.RPAREN);
             return atom;
         } else {
-            return new VariableNode(match(TokenType.VARIABLE).getText());
+            return variable();
+        }
+    }
+
+    private Node variable() {
+        Node varNode = new VariableNode(match(TokenType.VARIABLE).getText());
+        if (lookAhead(1) == TokenType.LBRACKET) {
+            match(TokenType.LBRACKET);
+            Node key = expression();
+            match(TokenType.RBRACKET);
+            return new LookupNode((VariableNode) varNode, key);
+        } else {
+            return varNode;
         }
     }
 

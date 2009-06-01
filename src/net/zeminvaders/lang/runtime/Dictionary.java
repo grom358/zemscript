@@ -38,6 +38,14 @@ public class Dictionary extends ZemObject implements Iterable<Map.Entry<ZemObjec
         this.dict = dict;
     }
 
+    public ZemObject get(ZemObject key) {
+        return dict.get(key);
+    }
+
+    public void set(ZemObject key, ZemObject value) {
+        dict.put(key, value);
+    }
+
     @Override
     public int compareTo(ZemObject o) {
         throw new InvalidOperatorException();

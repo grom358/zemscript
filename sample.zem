@@ -34,6 +34,8 @@ while (counter <= length) {
 
 // Arrays
 my_list = ["apple", "banana", "orange"];
+println("list[1]: " ~ my_list[1]);
+my_list[1] = "pear";
 
 // foreach loop
 foreach (my_list as item) {
@@ -42,6 +44,8 @@ foreach (my_list as item) {
 
 // Dictonary
 dict = {"fruit" : "apple", "veggie" : "pumpkin"};
+println("fruit: " ~ dict["fruit"]);
+dict["fruit"] = "orange";
 
 foreach (dict as key : value) {
     println(key ~ ": " ~ value);

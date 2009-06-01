@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.InvalidTypeException;
 import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
@@ -30,15 +31,22 @@ import net.zeminvaders.lang.runtime.ZemObject;
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 public class AssignNode extends BinaryOpNode {
-    public AssignNode(VariableNode var, Node expression) {
+    public AssignNode(Node var, Node expression) {
         super("set!", var, expression);
     }
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        String name = ((VariableNode) getLeft()).getName();
+        Node left = getLeft();
         ZemObject value = getRight().eval(interpreter);
-        interpreter.setVariable(name, value);
-        return value;
+        if (left instanceof VariableNode) {
+            String name = ((VariableNode) left).getName();
+            interpreter.setVariable(name, value);
+            return value;
+        } else if (left instanceof LookupNode) {
+            ((LookupNode) left).set(interpreter, value);
+            return value;
+        }
+        throw new InvalidTypeException("Left hand of assignment must be a variable.");
     }
 }
