@@ -301,40 +301,47 @@ public class Parser {
     }
 
     private Node sumExpression() {
-        // term ((PLUS^|MINUS^) sumExpression)?
-        Node term = term();
-        if (lookAhead(1) == TokenType.PLUS) {
-            match(TokenType.PLUS);
-            return new AddOpNode(term, sumExpression());
-        } else if (lookAhead(1) == TokenType.MINUS) {
-            match(TokenType.MINUS);
-            return new SubtractOpNode(term, sumExpression());
+        // term ((PLUS^|MINUS^) term)*
+        Node termExpression = term();
+        while (lookAhead(1) == TokenType.PLUS ||
+                lookAhead(1) == TokenType.MINUS) {
+            if (lookAhead(1) == TokenType.PLUS) {
+                match(TokenType.PLUS);
+                termExpression = new AddOpNode(termExpression, term());
+            } else if (lookAhead(1) == TokenType.MINUS) {
+                match(TokenType.MINUS);
+                termExpression = new SubtractOpNode(termExpression, term());
+            }
         }
-        return term;
+        return termExpression;
     }
 
     private Node term() {
-        // factor ((MUL^|DIV^|MOD^) term)?
-        Node factor = factor();
-        if (lookAhead(1) == TokenType.MULTIPLY) {
-            match(TokenType.MULTIPLY);
-            return new MultiplyOpNode(factor, term());
-        } else if (lookAhead(1) == TokenType.DIVIDE) {
-            match(TokenType.DIVIDE);
-            return new DivideOpNode(factor, term());
-        } else if (lookAhead(1) == TokenType.MOD) {
-            match(TokenType.MOD);
-            return new ModOpNode(factor, term());
+        // factor ((MUL^|DIV^|MOD^) factor)*
+        Node factorExpression = factor();
+        while (lookAhead(1) == TokenType.MULTIPLY ||
+                lookAhead(1) == TokenType.DIVIDE ||
+                lookAhead(1) == TokenType.MOD) {
+            if (lookAhead(1) == TokenType.MULTIPLY) {
+                match(TokenType.MULTIPLY);
+                factorExpression = new MultiplyOpNode(factorExpression, factor());
+            } else if (lookAhead(1) == TokenType.DIVIDE) {
+                match(TokenType.DIVIDE);
+                factorExpression = new DivideOpNode(factorExpression, factor());
+            } else if (lookAhead(1) == TokenType.MOD) {
+                match(TokenType.MOD);
+                factorExpression = new ModOpNode(factorExpression, factor());
+            }
         }
-        return factor;
+        return factorExpression;
     }
 
     private Node factor() {
-        // signExpr (POW^ factor)?
+        // signExpr (POW^ signExpr)*
         Node expression = signExpression();
-        if (lookAhead(1) == TokenType.POWER) {
+        while (lookAhead(1) == TokenType.POWER) {
             match(TokenType.POWER);
-            return new PowerOpNode(expression, factor());
+            expression = new PowerOpNode(expression, signExpression());
         }
         return expression;
     }
