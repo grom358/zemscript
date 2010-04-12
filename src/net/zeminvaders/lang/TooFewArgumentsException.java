@@ -29,12 +29,17 @@ package net.zeminvaders.lang;
 public class TooFewArgumentsException extends RuntimeException {
     private static final long serialVersionUID = -8841576834370732148L;
 
-    // TODO Report where the function call is
+    private TooFewArgumentsException(String message, SourcePosition pos) {
+        super(message + " on line " + pos.getLineNumber() +
+            " at column " + pos.getColumnNumber());
+    }
+
     public TooFewArgumentsException(
             String functionName,
             int noArgsRequired,
-            int noArgs) {
-        super(functionName + " expects at least " + noArgsRequired
-                + " arguments but got " + noArgs);
+            int noArgs,
+            SourcePosition pos) {
+        this(functionName + " expects at least " + noArgsRequired
+                + " arguments but got " + noArgs, pos);
     }
 }

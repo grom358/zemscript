@@ -105,7 +105,7 @@ public class Interpreter {
      * @param args List of arguments to pass to function
      * @return Return value from function
      */
-    public ZemObject callFunction(String functionName, List<ZemObject> args) {
+    public ZemObject callFunction(String functionName, List<ZemObject> args, SourcePosition pos) {
         Function function = (Function) symbolTable.get(functionName);
         // Save the symbolTable
         Map<String, ZemObject> savedSymbolTable =
@@ -131,7 +131,7 @@ public class Interpreter {
         }
         if (noMissingArgs > 0) {
             throw new TooFewArgumentsException(functionName, noRequiredArgs,
-                    args.size());
+                    args.size(), pos);
         }
         ZemObject ret = function.eval(this);
         // Restore symbolTable

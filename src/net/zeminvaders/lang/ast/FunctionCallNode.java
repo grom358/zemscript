@@ -53,7 +53,7 @@ public class FunctionCallNode extends Node {
         for (Node node : arguments) {
             args.add(node.eval(interpreter));
         }
-        return interpreter.callFunction(functionName, args);
+        return interpreter.callFunction(functionName, args, getPosition());
     }
 
     @Override
