@@ -24,6 +24,7 @@ package net.zeminvaders.lang.ast;
 import java.util.Map;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.InvalidTypeException;
 import net.zeminvaders.lang.runtime.Dictionary;
 import net.zeminvaders.lang.runtime.ZemArray;
@@ -39,7 +40,8 @@ public class ForeachNode extends Node {
     private Node asNode;
     private Node loopBody;
 
-    public ForeachNode(VariableNode onVariableNode, Node asNode, Node loopBody) {
+    public ForeachNode(SourcePosition pos, VariableNode onVariableNode, Node asNode, Node loopBody) {
+        super(pos);
         this.onVariableNode = onVariableNode;
         this.asNode = asNode;
         this.loopBody = loopBody;

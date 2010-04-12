@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.Parameter;
 import net.zeminvaders.lang.runtime.UserFunction;
 import net.zeminvaders.lang.runtime.ZemObject;
@@ -40,7 +41,8 @@ public class FunctionNode extends Node {
     private List<Node> parameters;
     private Node body;
 
-    public FunctionNode(List<Node> parameters, Node body) {
+    public FunctionNode(SourcePosition pos, List<Node> parameters, Node body) {
+        super(pos);
         this.parameters = parameters;
         this.body = body;
     }

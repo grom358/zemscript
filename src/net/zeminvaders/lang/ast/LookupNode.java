@@ -25,6 +25,7 @@ import java.util.Map;
 
 import net.zeminvaders.lang.Interpreter;
 import net.zeminvaders.lang.InvalidTypeException;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.Dictionary;
 import net.zeminvaders.lang.runtime.ZemArray;
 import net.zeminvaders.lang.runtime.ZemObject;
@@ -38,7 +39,8 @@ public class LookupNode extends Node {
     private VariableNode varNode;
     private Node keyNode;
 
-    public LookupNode(VariableNode varNode, Node keyNode) {
+    public LookupNode(SourcePosition pos, VariableNode varNode, Node keyNode) {
+        super(pos);
         this.varNode = varNode;
         this.keyNode = keyNode;
     }

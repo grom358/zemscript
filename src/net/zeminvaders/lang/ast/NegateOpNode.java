@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemNumber;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -31,8 +32,8 @@ import net.zeminvaders.lang.runtime.ZemObject;
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 public class NegateOpNode extends UnaryOpNode implements IArithmeticOpNode {
-    public NegateOpNode(Node value) {
-        super("-", value);
+    public NegateOpNode(SourcePosition pos, Node value) {
+        super(pos, "-", value);
     }
 
     @Override

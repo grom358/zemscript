@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemNumber;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -32,8 +33,8 @@ import net.zeminvaders.lang.runtime.ZemObject;
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 public class ModOpNode extends BinaryOpNode implements IArithmeticOpNode {
-    public ModOpNode(Node left, Node right) {
-        super("%", left, right);
+    public ModOpNode(SourcePosition pos, Node left, Node right) {
+        super(pos, "%", left, right);
     }
 
     @Override

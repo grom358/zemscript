@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.InvalidTypeException;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -31,8 +32,8 @@ import net.zeminvaders.lang.runtime.ZemObject;
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 public class AssignNode extends BinaryOpNode {
-    public AssignNode(Node var, Node expression) {
-        super("set!", var, expression);
+    public AssignNode(SourcePosition pos, Node var, Node expression) {
+        super(pos, "set!", var, expression);
     }
 
     @Override

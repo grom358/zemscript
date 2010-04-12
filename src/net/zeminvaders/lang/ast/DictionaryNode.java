@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.Dictionary;
 import net.zeminvaders.lang.runtime.DictionaryEntry;
 import net.zeminvaders.lang.runtime.ZemObject;
@@ -38,7 +39,8 @@ import net.zeminvaders.lang.runtime.ZemObject;
 public class DictionaryNode extends Node {
     private List<DictionaryEntryNode> elements;
 
-    public DictionaryNode(List<DictionaryEntryNode> elements) {
+    public DictionaryNode(SourcePosition pos, List<DictionaryEntryNode> elements) {
+        super(pos);
         this.elements = elements;
     }
 

@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ReturnException;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -33,7 +34,8 @@ import net.zeminvaders.lang.runtime.ZemObject;
 public class ReturnNode extends Node {
     private Node expression;
 
-    public ReturnNode(Node expression) {
+    public ReturnNode(SourcePosition pos, Node expression) {
+        super(pos);
         this.expression = expression;
     }
 

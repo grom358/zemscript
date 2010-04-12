@@ -21,13 +21,15 @@
  */
 package net.zeminvaders.lang.ast;
 
+import net.zeminvaders.lang.SourcePosition;
+
 /**
  * Base class for relational operators (<, <=, ==, >=, >, !=)
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 public abstract class RelationalOpNode extends BinaryOpNode {
-    public RelationalOpNode(String operator, Node left, Node right) {
-        super(operator, left, right);
+    public RelationalOpNode(SourcePosition pos, String operator, Node left, Node right) {
+        super(pos, operator, left, right);
     }
 }

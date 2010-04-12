@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemBoolean;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -35,7 +36,8 @@ public class IfNode extends Node {
     private Node thenBlock;
     private Node elseBlock;
 
-    public IfNode(Node testCondition, Node thenBlock, Node elseBlock) {
+    public IfNode(SourcePosition pos, Node testCondition, Node thenBlock, Node elseBlock) {
+        super(pos);
         this.testCondition = testCondition;
         this.thenBlock = thenBlock;
         this.elseBlock = elseBlock;

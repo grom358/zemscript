@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
@@ -38,7 +39,8 @@ public class FunctionCallNode extends Node {
     private String functionName;
     private List<Node> arguments;
 
-    public FunctionCallNode(String functionName, List<Node> arguments) {
+    public FunctionCallNode(SourcePosition pos, String functionName, List<Node> arguments) {
+        super(pos);
         this.functionName = functionName;
         this.arguments = arguments;
     }

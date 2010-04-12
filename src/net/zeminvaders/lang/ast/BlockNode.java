@@ -24,6 +24,7 @@ package net.zeminvaders.lang.ast;
 import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
@@ -34,7 +35,8 @@ import net.zeminvaders.lang.runtime.ZemObject;
 public class BlockNode extends Node {
     private List<Node> statements;
 
-    public BlockNode(List<Node> statements) {
+    public BlockNode(SourcePosition pos, List<Node> statements) {
+        super(pos);
         this.statements = statements;
     }
 

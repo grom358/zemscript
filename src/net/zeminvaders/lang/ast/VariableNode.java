@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
@@ -32,7 +33,8 @@ import net.zeminvaders.lang.runtime.ZemObject;
 public class VariableNode extends Node {
     private String name;
 
-    public VariableNode(String variableName) {
+    public VariableNode(SourcePosition pos, String variableName) {
+        super(pos);
         name = variableName;
     }
 

@@ -21,6 +21,8 @@
  */
 package net.zeminvaders.lang.ast;
 
+import net.zeminvaders.lang.SourcePosition;
+
 /**
  * Base class for unary operators.
  *
@@ -30,7 +32,8 @@ public abstract class UnaryOpNode extends Node {
     protected String operator;
     protected Node operand;
 
-    public UnaryOpNode(String operator, Node operand) {
+    public UnaryOpNode(SourcePosition pos, String operator, Node operand) {
+        super(pos);
         this.operator = operator;
         this.operand = operand;
     }

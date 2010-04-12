@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
@@ -33,7 +34,8 @@ public class WhileNode extends Node {
     private Node testCondition;
     private Node loopBody;
 
-    public WhileNode(Node testCondition, Node loopBody) {
+    public WhileNode(SourcePosition pos, Node testCondition, Node loopBody) {
+        super(pos);
         this.testCondition = testCondition;
         this.loopBody = loopBody;
     }

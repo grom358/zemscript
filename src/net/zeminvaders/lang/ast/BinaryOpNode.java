@@ -21,6 +21,8 @@
  */
 package net.zeminvaders.lang.ast;
 
+import net.zeminvaders.lang.SourcePosition;
+
 /**
  * Base class for binary operators.
  *
@@ -35,7 +37,8 @@ public abstract class BinaryOpNode extends Node {
      * @param left  Left operand
      * @param right Right operand
      */
-    protected BinaryOpNode(String operator, Node left, Node right) {
+    protected BinaryOpNode(SourcePosition pos, String operator, Node left, Node right) {
+        super(pos);
         this.operator = operator;
         this.left = left;
         this.right = right;

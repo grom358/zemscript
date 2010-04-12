@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.DictionaryEntry;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -34,7 +35,8 @@ public class DictionaryEntryNode extends Node {
     private Node key;
     private Node value;
 
-    public DictionaryEntryNode(Node key, Node value) {
+    public DictionaryEntryNode(SourcePosition pos, Node key, Node value) {
+        super(pos);
         this.key = key;
         this.value = value;
     }

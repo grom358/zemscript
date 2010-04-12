@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemObject;
 import net.zeminvaders.lang.runtime.ZemString;
 
@@ -33,7 +34,8 @@ import net.zeminvaders.lang.runtime.ZemString;
 public class StringNode extends Node {
     private ZemString literal;
 
-    public StringNode(String literal) {
+    public StringNode(SourcePosition pos, String literal) {
+        super(pos);
         this.literal = new ZemString(literal);
     }
 

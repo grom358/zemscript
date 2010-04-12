@@ -21,6 +21,7 @@
  */
 package net.zeminvaders.lang.ast;
 
+import net.zeminvaders.lang.SourcePosition;
 import java.util.List;
 
 /**
@@ -29,8 +30,8 @@ import java.util.List;
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 public class RootNode extends BlockNode {
-    public RootNode(List<Node> statements) {
-        super(statements);
+    public RootNode(SourcePosition pos, List<Node> statements) {
+        super(pos, statements);
     }
 
     @Override

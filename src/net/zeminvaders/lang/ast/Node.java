@@ -21,6 +21,7 @@
  */
 package net.zeminvaders.lang.ast;
 
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.Interpreter;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -30,5 +31,15 @@ import net.zeminvaders.lang.runtime.ZemObject;
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 public abstract class Node {
+    private SourcePosition position;
+
+    public Node(SourcePosition position) {
+        this.position = position;
+    }
+
+    public SourcePosition getPosition() {
+        return position;
+    }
+
     abstract public ZemObject eval(Interpreter interpreter);
 }

@@ -98,18 +98,18 @@ public class Parser {
         while (lookAhead(1) != null) {
             script.add(statement());
         }
-        return new RootNode(script);
+        return new RootNode(new SourcePosition(1, 1), script);
     }
 
     private BlockNode block() {
         // LBRACE! statement* RBRACE!
-        match(TokenType.LBRACE);
+        Token lbrace = match(TokenType.LBRACE);
         List<Node> block = new LinkedList<Node>();
         while (lookAhead(1) != TokenType.RBRACE) {
             block.add(statement());
         }
         match(TokenType.RBRACE);
-        return new BlockNode(block);
+        return new BlockNode(lbrace.getPosition(), block);
     }
 
     private Node statement() {
@@ -124,15 +124,15 @@ public class Parser {
             return funcCall;
         } else if (type == TokenType.VARIABLE) {
             Node var = variable();
-            match(TokenType.ASSIGN);
+            SourcePosition pos = match(TokenType.ASSIGN).getPosition();
             Node value = expression();
             match(TokenType.END_STATEMENT);
-            return new AssignNode(var, value);
+            return new AssignNode(pos, var, value);
         } else if (type == TokenType.RETURN) {
-            match(TokenType.RETURN);
+            SourcePosition pos = match(TokenType.RETURN).getPosition();
             Node expression = expression();
             match(TokenType.END_STATEMENT);
-            return new ReturnNode(expression);
+            return new ReturnNode(pos, expression);
         } else if (type == TokenType.IF) {
             return _if();
         } else if (type == TokenType.WHILE) {
@@ -155,14 +155,14 @@ public class Parser {
 
     private Node _if() {
         // IF! condition block else?
-        match(TokenType.IF);
+        SourcePosition pos = match(TokenType.IF).getPosition();
         Node test = condition();
         BlockNode thenBlock = block();
         Node elseBlock = null;
         if (lookAhead(1) == TokenType.ELSE) {
             elseBlock = _else();
         }
-        return new IfNode(test, thenBlock, elseBlock);
+        return new IfNode(pos, test, thenBlock, elseBlock);
     }
 
     private Node _else() {
@@ -177,35 +177,38 @@ public class Parser {
 
     private Node _while() {
         // WHILE! condition block
-        match(TokenType.WHILE);
+        SourcePosition pos = match(TokenType.WHILE).getPosition();
         Node test = condition();
         Node loopBlock = block();
-        return new WhileNode(test, loopBlock);
+        return new WhileNode(pos, test, loopBlock);
     }
 
     private Node foreach() {
         // FOREACH! LPAREN! VARIABLE! AS! VARIABLE! (^COLON VARIABLE!) RPAREN!
         // LBRACE! block RBRACE!
-        match(TokenType.FOR_EACH);
+        SourcePosition pos = match(TokenType.FOR_EACH).getPosition();
         match(TokenType.LPAREN);
-        VariableNode onEach = new VariableNode(match(TokenType.VARIABLE).getText());
+        Token t = match(TokenType.VARIABLE);
+        VariableNode onEach = new VariableNode(t.getPosition(), t.getText());
         match(TokenType.AS);
-        VariableNode value = new VariableNode(match(TokenType.VARIABLE).getText());
+        t = match(TokenType.VARIABLE);
+        VariableNode value = new VariableNode(t.getPosition(), t.getText());
         Node as = value;
         if (lookAhead(1) == TokenType.COLON) {
-            match(TokenType.COLON);
+            SourcePosition entryPos = match(TokenType.COLON).getPosition();
             VariableNode key = value;
-            value = new VariableNode(match(TokenType.VARIABLE).getText());
-            as = new DictionaryEntryNode(key, value);
+            t = match(TokenType.VARIABLE);
+            value = new VariableNode(t.getPosition(), t.getText());
+            as = new DictionaryEntryNode(entryPos, key, value);
         }
         match(TokenType.RPAREN);
         Node loopBlock = block();
-        return new ForeachNode(onEach, as, loopBlock);
+        return new ForeachNode(pos, onEach, as, loopBlock);
     }
 
     private Node array() {
         // LBRACKET! (expression (COMMA^ expression)*)? RBRACKET!
-        match(TokenType.LBRACKET);
+        SourcePosition pos = match(TokenType.LBRACKET).getPosition();
         List<Node> elements = new LinkedList<Node>();
         if (lookAhead(1) != TokenType.RBRACKET) {
             elements.add(expression());
@@ -215,12 +218,12 @@ public class Parser {
             }
         }
         match(TokenType.RBRACKET);
-        return new ArrayNode(elements);
+        return new ArrayNode(pos, elements);
     }
 
     private DictionaryNode dictionary() {
         // LBRACE! (keyValue (COMMA^ keyValue)*)? RBRACE!
-        match(TokenType.LBRACE);
+        SourcePosition pos = match(TokenType.LBRACE).getPosition();
         List<DictionaryEntryNode> elements = new LinkedList<DictionaryEntryNode>();
         if (lookAhead(1) != TokenType.RBRACE) {
             elements.add(keyValue());
@@ -230,30 +233,32 @@ public class Parser {
             }
         }
         match(TokenType.RBRACE);
-        return new DictionaryNode(elements);
+        return new DictionaryNode(pos, elements);
     }
 
     private DictionaryEntryNode keyValue() {
         // key COLON! expression
         Node key = key();
-        match(TokenType.COLON);
+        SourcePosition pos = match(TokenType.COLON).getPosition();
         Node value = expression();
-        return new DictionaryEntryNode(key, value);
+        return new DictionaryEntryNode(pos, key, value);
     }
 
     private Node key() {
         // STRING_LITERAL | NUMBER
         if (lookAhead(1) == TokenType.STRING_LITERAL) {
-            return new StringNode(match(TokenType.STRING_LITERAL).getText());
+            Token t = match(TokenType.STRING_LITERAL);
+            return new StringNode(t.getPosition(), t.getText());
         } else {
-            return new NumberNode(match(TokenType.NUMBER).getText());
+            Token t = match(TokenType.NUMBER);
+            return new NumberNode(t.getPosition(), t.getText());
         }
     }
 
     private FunctionNode function() {
         // FUNCTION! LPAREN! parameterList? RPAREN!
         // LBRACE! block() RBRACE!
-        match(TokenType.FUNCTION);
+        SourcePosition pos = match(TokenType.FUNCTION).getPosition();
         match(TokenType.LPAREN);
         List<Node> paramList = FunctionNode.NO_PARAMETERS;
         if (lookAhead(1) != TokenType.RPAREN) {
@@ -261,7 +266,7 @@ public class Parser {
         }
         match(TokenType.RPAREN);
         Node body = block();
-        return new FunctionNode(paramList, body);
+        return new FunctionNode(pos, paramList, body);
     }
 
     private List<Node> parameterList() {
@@ -277,11 +282,12 @@ public class Parser {
 
     private Node parameter() {
         // variable (ASSIGN^ expression)?
-        VariableNode var = new VariableNode(match(TokenType.VARIABLE).getText());
+        Token t = match(TokenType.VARIABLE);
+        VariableNode var = new VariableNode(t.getPosition(), t.getText());
         if (lookAhead(1) == TokenType.ASSIGN) {
-            match(TokenType.ASSIGN);
+            SourcePosition pos = match(TokenType.ASSIGN).getPosition();
             Node e = expression();
-            return new AssignNode(var, e);
+            return new AssignNode(pos, var, e);
         }
         return var;
     }
@@ -306,11 +312,11 @@ public class Parser {
         while (lookAhead(1) == TokenType.PLUS ||
                 lookAhead(1) == TokenType.MINUS) {
             if (lookAhead(1) == TokenType.PLUS) {
-                match(TokenType.PLUS);
-                termExpression = new AddOpNode(termExpression, term());
+                termExpression = new AddOpNode(match(TokenType.PLUS).getPosition(),
+                    termExpression, term());
             } else if (lookAhead(1) == TokenType.MINUS) {
-                match(TokenType.MINUS);
-                termExpression = new SubtractOpNode(termExpression, term());
+                termExpression = new SubtractOpNode(match(TokenType.MINUS).getPosition(),
+                    termExpression, term());
             }
         }
         return termExpression;
@@ -323,14 +329,17 @@ public class Parser {
                 lookAhead(1) == TokenType.DIVIDE ||
                 lookAhead(1) == TokenType.MOD) {
             if (lookAhead(1) == TokenType.MULTIPLY) {
-                match(TokenType.MULTIPLY);
-                factorExpression = new MultiplyOpNode(factorExpression, factor());
+                factorExpression = new MultiplyOpNode(
+                    match(TokenType.MULTIPLY).getPosition(),
+                    factorExpression, factor());
             } else if (lookAhead(1) == TokenType.DIVIDE) {
-                match(TokenType.DIVIDE);
-                factorExpression = new DivideOpNode(factorExpression, factor());
+                factorExpression = new DivideOpNode(
+                    match(TokenType.DIVIDE).getPosition(),
+                    factorExpression, factor());
             } else if (lookAhead(1) == TokenType.MOD) {
-                match(TokenType.MOD);
-                factorExpression = new ModOpNode(factorExpression, factor());
+                factorExpression = new ModOpNode(
+                    match(TokenType.MOD).getPosition(),
+                    factorExpression, factor());
             }
         }
         return factorExpression;
@@ -340,8 +349,8 @@ public class Parser {
         // signExpr (POW^ signExpr)*
         Node expression = signExpression();
         while (lookAhead(1) == TokenType.POWER) {
-            match(TokenType.POWER);
-            expression = new PowerOpNode(expression, signExpression());
+            expression = new PowerOpNode(match(TokenType.POWER).getPosition(),
+                expression, signExpression());
         }
         return expression;
     }
@@ -356,7 +365,7 @@ public class Parser {
         }
         Node value = value();
         if (signToken != null) {
-            return new NegateOpNode(value);
+            return new NegateOpNode(signToken.getPosition(), value);
         } else {
             return value;
         }
@@ -373,14 +382,15 @@ public class Parser {
 
     private Node functionCall() {
         // f:ID^ LPAREN! argumentList RPAREN!
-        String functionName = match(TokenType.VARIABLE).getText();
+        Token functionToken = match(TokenType.VARIABLE);
+        String functionName = functionToken.getText();
         match(TokenType.LPAREN);
         List<Node> arguments = FunctionCallNode.NO_ARGUMENTS;
         if (lookAhead(1) != TokenType.RPAREN) {
             arguments = argumentList();
         }
         match(TokenType.RPAREN);
-        return new FunctionCallNode(functionName, arguments);
+        return new FunctionCallNode(functionToken.getPosition(), functionName, arguments);
     }
 
     private List<Node> argumentList() {
@@ -401,13 +411,12 @@ public class Parser {
         // | variable
         TokenType type = lookAhead(1);
         if (type == TokenType.NUMBER) {
-            return new NumberNode(match(TokenType.NUMBER).getText());
+            Token t = match(TokenType.NUMBER);
+            return new NumberNode(t.getPosition(), t.getText());
         } else if (type == TokenType.TRUE) {
-            match(TokenType.TRUE);
-            return new TrueNode();
+            return new TrueNode(match(TokenType.TRUE).getPosition());
         } else if (type == TokenType.FALSE) {
-            match(TokenType.FALSE);
-            return new FalseNode();
+            return new FalseNode(match(TokenType.FALSE).getPosition());
         } else if (type == TokenType.LPAREN) {
             match(TokenType.LPAREN);
             Node atom = expression();
@@ -419,12 +428,13 @@ public class Parser {
     }
 
     private Node variable() {
-        Node varNode = new VariableNode(match(TokenType.VARIABLE).getText());
+        Token t = match(TokenType.VARIABLE);
+        Node varNode = new VariableNode(t.getPosition(), t.getText());
         if (lookAhead(1) == TokenType.LBRACKET) {
-            match(TokenType.LBRACKET);
+            SourcePosition pos = match(TokenType.LBRACKET).getPosition();
             Node key = expression();
             match(TokenType.RBRACKET);
-            return new LookupNode((VariableNode) varNode, key);
+            return new LookupNode(pos, (VariableNode) varNode, key);
         } else {
             return varNode;
         }
@@ -434,8 +444,7 @@ public class Parser {
         // booleanTerm (OR^ booleanExpression)?
         Node boolTerm = booleanTerm();
         if (lookAhead(1) == TokenType.OR) {
-            match(TokenType.OR);
-            return new OrOpNode(boolTerm, booleanExpression());
+            return new OrOpNode(match(TokenType.OR).getPosition(), boolTerm, booleanExpression());
         }
         return boolTerm;
     }
@@ -444,8 +453,7 @@ public class Parser {
         // booleanFactor (AND^ booleanTerm)?
         Node boolFactor = booleanFactor();
         if (lookAhead(1) == TokenType.AND) {
-            match(TokenType.AND);
-            return new AndOpNode(boolFactor, booleanTerm());
+            return new AndOpNode(match(TokenType.AND).getPosition(), boolFactor, booleanTerm());
         }
         return boolFactor;
     }
@@ -453,8 +461,7 @@ public class Parser {
     private Node booleanFactor() {
         // (NOT^)? relation
         if (lookAhead(1) == TokenType.NOT) {
-            match(TokenType.NOT);
-            return new NotOpNode(booleanRelation());
+            return new NotOpNode(match(TokenType.NOT).getPosition(), booleanRelation());
         }
         return booleanRelation();
     }
@@ -464,23 +471,23 @@ public class Parser {
         Node sumExpr = sumExpression();
         TokenType type = lookAhead(1);
         if (type == TokenType.LESS_EQUAL) {
-            match(TokenType.LESS_EQUAL);
-            return new LessEqualOpNode(sumExpr, sumExpression());
+            return new LessEqualOpNode(match(TokenType.LESS_EQUAL).getPosition(),
+                sumExpr, sumExpression());
         } else if (type == TokenType.LESS_THEN) {
-            match(TokenType.LESS_THEN);
-            return new LessThenOpNode(sumExpr, sumExpression());
+            return new LessThenOpNode(match(TokenType.LESS_THEN).getPosition(),
+                sumExpr, sumExpression());
         } else if (type == TokenType.GREATER_EQUAL) {
-            match(TokenType.GREATER_EQUAL);
-            return new GreaterEqualOpNode(sumExpr, sumExpression());
+            return new GreaterEqualOpNode(match(TokenType.GREATER_EQUAL).getPosition(),
+                sumExpr, sumExpression());
         } else if (type == TokenType.GREATER_THEN) {
-            match(TokenType.GREATER_THEN);
-            return new GreaterThenOpNode(sumExpr, sumExpression());
+            return new GreaterThenOpNode(match(TokenType.GREATER_THEN).getPosition(),
+                sumExpr, sumExpression());
         } else if (type == TokenType.EQUAL) {
-            match(TokenType.EQUAL);
-            return new EqualsOpNode(sumExpr, sumExpression());
+            return new EqualsOpNode(match(TokenType.EQUAL).getPosition(),
+                sumExpr, sumExpression());
         } else if (type == TokenType.NOT_EQUAL) {
-            match(TokenType.NOT_EQUAL);
-            return new NotEqualsOpNode(sumExpr, sumExpression());
+            return new NotEqualsOpNode(match(TokenType.NOT_EQUAL).getPosition(),
+                sumExpr, sumExpression());
         }
         return sumExpr;
     }
@@ -489,8 +496,8 @@ public class Parser {
         // string (CONC^ stringExpr)?
         Node stringNode = string();
         if (lookAhead(1) == TokenType.CONCAT) {
-            match(TokenType.CONCAT);
-            return new ConcatOpNode(stringNode, stringExpression());
+            return new ConcatOpNode(match(TokenType.CONCAT).getPosition(),
+                stringNode, stringExpression());
         }
         return stringNode;
     }
@@ -498,7 +505,8 @@ public class Parser {
     private Node string() {
         // STRING_LITERAL | boolExpr
         if (lookAhead(1) == TokenType.STRING_LITERAL) {
-            return new StringNode(match(TokenType.STRING_LITERAL).getText());
+            Token t = match(TokenType.STRING_LITERAL);
+            return new StringNode(t.getPosition(), t.getText());
         } else {
             return booleanExpression();
         }
