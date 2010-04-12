@@ -57,10 +57,4 @@ public abstract class ZemObject implements Comparable<ZemObject> {
         // Implicit converting of types to string
         return new ZemString(this.toString());
     }
-
-    protected void checkTypes(ZemObject left, ZemObject right) {
-        if (!left.getClass().equals(right.getClass())) {
-            throw new TypeMismatchException();
-        }
-    }
 }

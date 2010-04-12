@@ -21,6 +21,12 @@
  */
 package net.zeminvaders.lang;
 
+import net.zeminvaders.lang.runtime.Dictionary;
+import net.zeminvaders.lang.runtime.ZemArray;
+import net.zeminvaders.lang.runtime.ZemBoolean;
+import net.zeminvaders.lang.runtime.ZemNumber;
+import net.zeminvaders.lang.runtime.ZemString;
+
 /**
  * Types don't match.
  *
@@ -29,13 +35,23 @@ package net.zeminvaders.lang;
 public class TypeMismatchException extends ZemException {
     private static final long serialVersionUID = 9115378805326306069L;
 
-    // TODO Report what the types are
-    public TypeMismatchException() {
-        this("Type mismatch");
+    static private String toString(Class type) {
+        if (type == Dictionary.class) {
+            return "dictionary";
+        } else if (type == ZemArray.class) {
+            return "array";
+        } else if (type == ZemBoolean.class) {
+            return "boolean";
+        } else if (type == ZemNumber.class) {
+            return "number";
+        } else if (type == ZemString.class) {
+            return "string";
+        } else {
+            return type.getName();
+        }
     }
 
-    // TODO Report where the mismatch occurred
-    public TypeMismatchException(String message) {
-        super(message);
+    public TypeMismatchException(SourcePosition pos, Class expect, Class actual) {
+        super("Type mismatch - Excepted type '" + toString(expect) + "' but got type '" + toString(actual) + "'", pos);
     }
 }

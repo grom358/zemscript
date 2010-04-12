@@ -44,7 +44,6 @@ final public class ZemString extends ZemObject {
 
     @Override
     public int compareTo(ZemObject object) {
-        checkTypes(this, object);
         ZemString str = (ZemString) object;
         return value.compareTo(str.value);
     }

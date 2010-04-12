@@ -76,7 +76,6 @@ final public class ZemNumber extends ZemObject {
     }
 
     public int compareTo(ZemObject object) {
-        checkTypes(this, object);
         ZemNumber number = (ZemNumber) object;
         return value.compareTo(number.value);
     }

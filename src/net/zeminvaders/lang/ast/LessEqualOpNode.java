@@ -38,8 +38,6 @@ public class LessEqualOpNode extends RelationalOpNode {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        ZemObject left = getLeft().eval(interpreter);
-        ZemObject right = getRight().eval(interpreter);
-        return ZemBoolean.valueOf(left.compareTo(right) <= 0);
+        return ZemBoolean.valueOf(compare(interpreter) <= 0);
     }
 }

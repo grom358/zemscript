@@ -21,7 +21,11 @@
  */
 package net.zeminvaders.lang.ast;
 
+import net.zeminvaders.lang.Interpreter;
 import net.zeminvaders.lang.SourcePosition;
+import net.zeminvaders.lang.TypeMismatchException;
+import net.zeminvaders.lang.runtime.ZemBoolean;
+import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
  * Base class for relational operators (<, <=, ==, >=, >, !=)
@@ -31,5 +35,25 @@ import net.zeminvaders.lang.SourcePosition;
 public abstract class RelationalOpNode extends BinaryOpNode {
     public RelationalOpNode(SourcePosition pos, String operator, Node left, Node right) {
         super(pos, operator, left, right);
+    }
+
+    protected void checkTypes(ZemObject left, ZemObject right) {
+        if (!left.getClass().equals(right.getClass())) {
+            throw new TypeMismatchException(getPosition(), left.getClass(), right.getClass());
+        }
+    }
+
+    protected int compare(Interpreter interpreter) {
+        ZemObject left = getLeft().eval(interpreter);
+        ZemObject right = getRight().eval(interpreter);
+        checkTypes(left, right);
+        return left.compareTo(right);
+    }
+
+    protected ZemBoolean equals(Interpreter interpreter) {
+        ZemObject left = getLeft().eval(interpreter);
+        ZemObject right = getRight().eval(interpreter);
+        checkTypes(left, right);
+        return ZemBoolean.valueOf(left.equals(right));
     }
 }

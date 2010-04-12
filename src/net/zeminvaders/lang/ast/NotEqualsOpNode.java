@@ -38,8 +38,6 @@ public class NotEqualsOpNode extends RelationalOpNode {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        ZemObject left = getLeft().eval(interpreter);
-        ZemObject right = getRight().eval(interpreter);
-        return ZemBoolean.valueOf(!left.equals(right));
+        return equals(interpreter).not();
     }
 }
