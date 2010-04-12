@@ -26,7 +26,7 @@ package net.zeminvaders.lang;
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public class InvalidOperatorException extends RuntimeException {
+public class InvalidOperatorException extends ZemException {
     private static final long serialVersionUID = -57261291654807212L;
 
     // TODO Report what operator is invalid and where the error is

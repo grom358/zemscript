@@ -22,14 +22,21 @@
 package net.zeminvaders.lang;
 
 /**
- * Type is invalid.
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public class InvalidTypeException extends ZemException {
-    private static final long serialVersionUID = 9115378805326306069L;
+public class ZemException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-    public InvalidTypeException(String message, SourcePosition position) {
-        super(message, position);
+    private ZemException() {
+    }
+
+    public ZemException(String message) {
+        super(message);
+    }
+
+    public ZemException(String message, SourcePosition position) {
+        super(message + " on line " + position.getLineNumber() +
+            " at column " + position.getColumnNumber());
     }
 }

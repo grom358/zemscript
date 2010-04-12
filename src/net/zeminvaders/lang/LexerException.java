@@ -26,11 +26,10 @@ package net.zeminvaders.lang;
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public class LexerException extends RuntimeException {
+public class LexerException extends ZemException {
     private static final long serialVersionUID = -6905527358249165699L;
 
     public LexerException(String message, int lineNo, int column) {
-        super(message + " on line " + lineNo + " at column " +
-                + column);
+        super(message, new SourcePosition(lineNo, column));
     }
 }

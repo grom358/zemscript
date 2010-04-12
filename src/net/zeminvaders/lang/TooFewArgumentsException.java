@@ -26,20 +26,15 @@ package net.zeminvaders.lang;
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public class TooFewArgumentsException extends RuntimeException {
+public class TooFewArgumentsException extends ZemException {
     private static final long serialVersionUID = -8841576834370732148L;
-
-    private TooFewArgumentsException(String message, SourcePosition pos) {
-        super(message + " on line " + pos.getLineNumber() +
-            " at column " + pos.getColumnNumber());
-    }
 
     public TooFewArgumentsException(
             String functionName,
             int noArgsRequired,
             int noArgs,
             SourcePosition pos) {
-        this(functionName + " expects at least " + noArgsRequired
+        super(functionName + " expects at least " + noArgsRequired
                 + " arguments but got " + noArgs, pos);
     }
 }

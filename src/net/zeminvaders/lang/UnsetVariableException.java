@@ -26,7 +26,7 @@ package net.zeminvaders.lang;
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public class UnsetVariableException extends RuntimeException {
+public class UnsetVariableException extends ZemException {
     private static final long serialVersionUID = -3917677724213982759L;
 
     // TODO Report where the error is

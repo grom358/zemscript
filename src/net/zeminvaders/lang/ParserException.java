@@ -26,7 +26,7 @@ package net.zeminvaders.lang;
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public class ParserException extends RuntimeException {
+public class ParserException extends ZemException {
     private static final long serialVersionUID = 7505060960165209530L;
 
     public ParserException(String message) {
@@ -34,11 +34,6 @@ public class ParserException extends RuntimeException {
     }
 
     public ParserException(String message, SourcePosition position) {
-        this(message, position.getLineNumber(), position.getColumnNumber());
-    }
-
-    public ParserException(String message, int lineNo, int column) {
-        super(message + " on line " + lineNo + " at column " +
-                + column);
+        super(message, position);
     }
 }

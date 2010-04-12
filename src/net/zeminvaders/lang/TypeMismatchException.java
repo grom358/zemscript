@@ -26,7 +26,7 @@ package net.zeminvaders.lang;
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public class TypeMismatchException extends RuntimeException {
+public class TypeMismatchException extends ZemException {
     private static final long serialVersionUID = 9115378805326306069L;
 
     // TODO Report what the types are
