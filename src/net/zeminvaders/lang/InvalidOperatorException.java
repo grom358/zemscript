@@ -29,8 +29,7 @@ package net.zeminvaders.lang;
 public class InvalidOperatorException extends ZemException {
     private static final long serialVersionUID = -57261291654807212L;
 
-    // TODO Report what operator is invalid and where the error is
-    public InvalidOperatorException() {
-        super("Invalid operator");
+    public InvalidOperatorException(SourcePosition pos) {
+        super("Invalid operator", pos);
     }
 }

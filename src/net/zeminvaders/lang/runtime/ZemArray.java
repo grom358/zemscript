@@ -24,8 +24,6 @@ package net.zeminvaders.lang.runtime;
 import java.util.Iterator;
 import java.util.List;
 
-import net.zeminvaders.lang.InvalidOperatorException;
-
 /**
  * Array data type.
  *
@@ -61,7 +59,7 @@ public class ZemArray extends ZemObject implements Iterable<ZemObject> {
 
     @Override
     public int compareTo(ZemObject o) {
-        throw new InvalidOperatorException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -21,8 +21,6 @@
  */
 package net.zeminvaders.lang.runtime;
 
-import net.zeminvaders.lang.InvalidOperatorException;
-
 /**
  *
  *
@@ -70,7 +68,7 @@ final public class ZemBoolean extends ZemObject {
 
     @Override
     public int compareTo(ZemObject o) {
-        throw new InvalidOperatorException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

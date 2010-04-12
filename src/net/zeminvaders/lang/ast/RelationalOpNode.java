@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.InvalidOperatorException;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.TypeMismatchException;
 import net.zeminvaders.lang.runtime.ZemBoolean;
@@ -47,7 +48,11 @@ public abstract class RelationalOpNode extends BinaryOpNode {
         ZemObject left = getLeft().eval(interpreter);
         ZemObject right = getRight().eval(interpreter);
         checkTypes(left, right);
-        return left.compareTo(right);
+        try {
+            return left.compareTo(right);
+        } catch (UnsupportedOperationException e) {
+            throw new InvalidOperatorException(getPosition());
+        }
     }
 
     protected ZemBoolean equals(Interpreter interpreter) {

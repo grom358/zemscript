@@ -22,7 +22,6 @@
 package net.zeminvaders.lang.runtime;
 
 import net.zeminvaders.lang.Interpreter;
-import net.zeminvaders.lang.InvalidOperatorException;
 import net.zeminvaders.lang.SourcePosition;
 
 /**
@@ -65,6 +64,6 @@ public abstract class Function extends ZemObject {
 
     @Override
     public int compareTo(ZemObject o) {
-        throw new InvalidOperatorException();
+        throw new UnsupportedOperationException();
     }
 }

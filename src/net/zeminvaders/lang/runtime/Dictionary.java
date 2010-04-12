@@ -24,8 +24,6 @@ package net.zeminvaders.lang.runtime;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.zeminvaders.lang.InvalidOperatorException;
-
 /**
  * Map data structure.
  *
@@ -48,7 +46,7 @@ public class Dictionary extends ZemObject implements Iterable<Map.Entry<ZemObjec
 
     @Override
     public int compareTo(ZemObject o) {
-        throw new InvalidOperatorException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
