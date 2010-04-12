@@ -91,10 +91,10 @@ public class Interpreter {
      *
      * @param functionName Function to check.
      */
-    public void checkFunctionExists(String functionName) {
+    public void checkFunctionExists(String functionName, SourcePosition pos) {
         ZemObject symbol = getVariable(functionName);
         if (!(symbol instanceof Function)) {
-            throw new InvalidTypeException(functionName + " is not a function");
+            throw new InvalidTypeException(functionName + " is not a function", pos);
         }
     }
 

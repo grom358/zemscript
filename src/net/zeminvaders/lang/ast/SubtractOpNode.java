@@ -38,8 +38,8 @@ public class SubtractOpNode extends BinaryOpNode implements IArithmeticOpNode {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        ZemNumber left = getLeft().eval(interpreter).toNumber();
-        ZemNumber right = getRight().eval(interpreter).toNumber();
+        ZemNumber left = getLeft().eval(interpreter).toNumber(getLeft().getPosition());
+        ZemNumber right = getRight().eval(interpreter).toNumber(getRight().getPosition());
         return left.subtract(right);
     }
 }

@@ -47,7 +47,7 @@ public class FunctionCallNode extends Node {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        interpreter.checkFunctionExists(functionName);
+        interpreter.checkFunctionExists(functionName, getPosition());
         // Evaluate the arguments
         List<ZemObject> args = new ArrayList<ZemObject>(arguments.size());
         for (Node node : arguments) {

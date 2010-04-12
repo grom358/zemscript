@@ -38,7 +38,7 @@ public class NegateOpNode extends UnaryOpNode implements IArithmeticOpNode {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        ZemNumber operand = getOperand().eval(interpreter).toNumber();
+        ZemNumber operand = getOperand().eval(interpreter).toNumber(getOperand().getPosition());
         return operand.negate();
     }
 }

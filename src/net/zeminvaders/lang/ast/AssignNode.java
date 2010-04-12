@@ -48,6 +48,6 @@ public class AssignNode extends BinaryOpNode {
             ((LookupNode) left).set(interpreter, value);
             return value;
         }
-        throw new InvalidTypeException("Left hand of assignment must be a variable.");
+        throw new InvalidTypeException("Left hand of assignment must be a variable.", left.getPosition());
     }
 }

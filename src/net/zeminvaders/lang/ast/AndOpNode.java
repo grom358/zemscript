@@ -38,12 +38,12 @@ public class AndOpNode extends BinaryOpNode implements IBooleanOpNode {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        ZemBoolean left = getLeft().eval(interpreter).toBoolean();
+        ZemBoolean left = getLeft().eval(interpreter).toBoolean(getLeft().getPosition());
         if (!left.booleanValue()) {
             // Short circuit the operator, since false && test == false
             return left;
         }
-        ZemBoolean right = getRight().eval(interpreter).toBoolean();
+        ZemBoolean right = getRight().eval(interpreter).toBoolean(getRight().getPosition());
         return left.and(right);
     }
 }

@@ -57,7 +57,7 @@ public class IfNode extends Node {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        boolean test = testCondition.eval(interpreter).toBoolean().booleanValue();
+        boolean test = testCondition.eval(interpreter).toBoolean(testCondition.getPosition()).booleanValue();
         if (test) {
             return thenBlock.eval(interpreter);
         } else if (elseBlock != null) {

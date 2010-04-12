@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.runtime;
 
 import net.zeminvaders.lang.InvalidTypeException;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.TypeMismatchException;
 
 /**
@@ -30,18 +31,18 @@ import net.zeminvaders.lang.TypeMismatchException;
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
 public abstract class ZemObject implements Comparable<ZemObject> {
-    public ZemNumber toNumber() {
+    public ZemNumber toNumber(SourcePosition pos) {
         if (this instanceof ZemNumber) {
             return (ZemNumber) this;
         }
-        throw new InvalidTypeException("Expecting number");
+        throw new InvalidTypeException("Expecting number", pos);
     }
 
-    public ZemBoolean toBoolean() {
+    public ZemBoolean toBoolean(SourcePosition pos) {
         if (this instanceof ZemBoolean) {
             return (ZemBoolean) this;
         }
-        throw new InvalidTypeException("Expecting boolean");
+        throw new InvalidTypeException("Expecting boolean", pos);
     }
 
     public ZemString toZString() {

@@ -29,8 +29,8 @@ package net.zeminvaders.lang;
 public class InvalidTypeException extends RuntimeException {
     private static final long serialVersionUID = 9115378805326306069L;
 
-    // TODO Report what types where expected, and where the error occurred
-    public InvalidTypeException(String message) {
-        super(message);
+    public InvalidTypeException(String message, SourcePosition position) {
+        super(message + " on line " + position.getLineNumber() +
+            " at column " + position.getColumnNumber());
     }
 }

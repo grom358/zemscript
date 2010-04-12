@@ -51,7 +51,7 @@ public class WhileNode extends Node {
     @Override
     public ZemObject eval(Interpreter interpreter) {
         ZemObject ret = null;
-        while (testCondition.eval(interpreter).toBoolean().booleanValue()) {
+        while (testCondition.eval(interpreter).toBoolean(testCondition.getPosition()).booleanValue()) {
             ret = loopBody.eval(interpreter);
         }
         return ret;

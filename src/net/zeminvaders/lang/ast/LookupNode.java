@@ -49,20 +49,20 @@ public class LookupNode extends Node {
         ZemObject var = interpreter.getVariable(varNode.getName());
         ZemObject ret = null;
         if (var instanceof ZemArray) {
-            int index = keyNode.eval(interpreter).toNumber().intValue();
+            int index = keyNode.eval(interpreter).toNumber(keyNode.getPosition()).intValue();
             return ((ZemArray) var).get(index);
         } else if (var instanceof Dictionary) {
             ZemObject key = keyNode.eval(interpreter);
             return ((Dictionary) var).get(key);
         }
-        throw new InvalidTypeException("lookup expects an array or dictionary.");
+        throw new InvalidTypeException("lookup expects an array or dictionary.", getPosition());
     }
 
     public void set(Interpreter interpreter, ZemObject result) {
         ZemObject var = interpreter.getVariable(varNode.getName());
         ZemObject ret = null;
         if (var instanceof ZemArray) {
-            int index = keyNode.eval(interpreter).toNumber().intValue();
+            int index = keyNode.eval(interpreter).toNumber(keyNode.getPosition()).intValue();
             ((ZemArray) var).set(index, result);
             return;
         } else if (var instanceof Dictionary) {
@@ -70,7 +70,7 @@ public class LookupNode extends Node {
             ((Dictionary) var).set(key, result);
             return;
         }
-        throw new InvalidTypeException("lookup expects an array or dictionary.");
+        throw new InvalidTypeException("lookup expects an array or dictionary.", getPosition());
     }
 
     @Override

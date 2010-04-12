@@ -69,7 +69,7 @@ public class ForeachNode extends Node {
             }
             return ret;
         }
-        throw new InvalidTypeException("foreach expects an array or dictionary.");
+        throw new InvalidTypeException("foreach expects an array or dictionary.", onVariableNode.getPosition());
     }
 
     @Override

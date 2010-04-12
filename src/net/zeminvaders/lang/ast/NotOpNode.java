@@ -38,7 +38,7 @@ public class NotOpNode extends UnaryOpNode implements IBooleanOpNode {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        ZemBoolean operand = getOperand().eval(interpreter).toBoolean();
+        ZemBoolean operand = getOperand().eval(interpreter).toBoolean(getOperand().getPosition());
         return operand.not();
     }
 }
