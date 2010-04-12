@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.runtime;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 
 /**
  * println built-in function. Prints a line of text to standard output.
@@ -30,8 +31,8 @@ import net.zeminvaders.lang.Interpreter;
  */
 public class PrintLineFunction extends PrintFunction {
     @Override
-    public ZemObject eval(Interpreter interpreter) {
-        ZemString str = interpreter.getVariable("string").toZString();
+    public ZemObject eval(Interpreter interpreter, SourcePosition pos) {
+        ZemString str = interpreter.getVariable("string", pos).toZString();
         System.out.println(str.toString());
         return str;
     }

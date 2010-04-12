@@ -29,8 +29,7 @@ package net.zeminvaders.lang;
 public class UnsetVariableException extends ZemException {
     private static final long serialVersionUID = -3917677724213982759L;
 
-    // TODO Report where the error is
-    public UnsetVariableException(String variableName) {
-        super(variableName + " is not set");
+    public UnsetVariableException(String variableName, SourcePosition pos) {
+        super(variableName + " is not set", pos);
     }
 }

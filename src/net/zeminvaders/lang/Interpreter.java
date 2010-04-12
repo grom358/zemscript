@@ -67,11 +67,12 @@ public class Interpreter {
      * Get the current value of a variable.
      *
      * @param name Variable name
+     * @param pos  Source position of where the variable is being requested
      * @return The value of the variable
      */
-    public ZemObject getVariable(String name) {
+    public ZemObject getVariable(String name, SourcePosition pos) {
         if (!symbolTable.containsKey(name)) {
-            throw new UnsetVariableException(name);
+            throw new UnsetVariableException(name, pos);
         }
         return symbolTable.get(name);
     }
@@ -92,7 +93,7 @@ public class Interpreter {
      * @param functionName Function to check.
      */
     public void checkFunctionExists(String functionName, SourcePosition pos) {
-        ZemObject symbol = getVariable(functionName);
+        ZemObject symbol = getVariable(functionName, pos);
         if (!(symbol instanceof Function)) {
             throw new InvalidTypeException(functionName + " is not a function", pos);
         }
@@ -133,7 +134,7 @@ public class Interpreter {
             throw new TooFewArgumentsException(functionName, noRequiredArgs,
                     args.size(), pos);
         }
-        ZemObject ret = function.eval(this);
+        ZemObject ret = function.eval(this, pos);
         // Restore symbolTable
         symbolTable = savedSymbolTable;
 

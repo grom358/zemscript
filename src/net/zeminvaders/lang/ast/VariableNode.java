@@ -49,6 +49,6 @@ public class VariableNode extends Node {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        return interpreter.getVariable(name);
+        return interpreter.getVariable(name, getPosition());
     }
 }

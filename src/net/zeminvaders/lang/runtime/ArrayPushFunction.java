@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.runtime;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 
 /**
  * array_push built-in function. Adds element to end of array.
@@ -32,9 +33,9 @@ public class ArrayPushFunction extends Function {
     private String[] parameters = {"array", "element"};
 
     @Override
-    public ZemObject eval(Interpreter interpreter) {
-        ZemArray array = (ZemArray) interpreter.getVariable("array");
-        array.push(interpreter.getVariable("element"));
+    public ZemObject eval(Interpreter interpreter, SourcePosition pos) {
+        ZemArray array = (ZemArray) interpreter.getVariable("array", pos);
+        array.push(interpreter.getVariable("element", pos));
         return array;
     }
 

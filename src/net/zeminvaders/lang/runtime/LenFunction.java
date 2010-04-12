@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.runtime;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
 
 /**
  * len built-in function. Return the length of a string.
@@ -45,8 +46,8 @@ public class LenFunction extends Function {
     }
 
     @Override
-    public ZemObject eval(Interpreter interpreter) {
-        ZemString str = interpreter.getVariable("string").toZString();
+    public ZemObject eval(Interpreter interpreter, SourcePosition pos) {
+        ZemString str = interpreter.getVariable("string", pos).toZString();
         return new ZemNumber(str.toString().length());
     }
 }

@@ -23,6 +23,7 @@ package net.zeminvaders.lang.runtime;
 
 import net.zeminvaders.lang.Interpreter;
 import net.zeminvaders.lang.InvalidOperatorException;
+import net.zeminvaders.lang.SourcePosition;
 
 /**
  * A function callable by the interpreter.
@@ -57,9 +58,10 @@ public abstract class Function extends ZemObject {
      * Evaluate the function.
      *
      * @param interpreter
+     * @param pos Source position of function call
      * @return The result of evaluating the function.
      */
-    abstract public ZemObject eval(Interpreter interpreter);
+    abstract public ZemObject eval(Interpreter interpreter, SourcePosition pos);
 
     @Override
     public int compareTo(ZemObject o) {

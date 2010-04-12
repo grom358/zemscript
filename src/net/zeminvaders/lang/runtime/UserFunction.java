@@ -25,6 +25,7 @@ import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
 import net.zeminvaders.lang.InvalidOperatorException;
+import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.ast.Node;
 
 /**
@@ -66,7 +67,7 @@ public class UserFunction extends Function {
     }
 
     @Override
-    public ZemObject eval(Interpreter interpreter) {
+    public ZemObject eval(Interpreter interpreter, SourcePosition pos) {
         try {
             return body.eval(interpreter);
         } catch (ReturnException e) {

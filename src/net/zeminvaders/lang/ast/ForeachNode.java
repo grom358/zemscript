@@ -49,7 +49,7 @@ public class ForeachNode extends Node {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        ZemObject onVariable = interpreter.getVariable(onVariableNode.getName());
+        ZemObject onVariable = interpreter.getVariable(onVariableNode.getName(), onVariableNode.getPosition());
         ZemObject ret = null;
         if (onVariable instanceof ZemArray) {
             String asVariableName = asNode.toString();

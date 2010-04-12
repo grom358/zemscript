@@ -46,7 +46,7 @@ public class LookupNode extends Node {
     }
 
     public ZemObject get(Interpreter interpreter) {
-        ZemObject var = interpreter.getVariable(varNode.getName());
+        ZemObject var = interpreter.getVariable(varNode.getName(), varNode.getPosition());
         ZemObject ret = null;
         if (var instanceof ZemArray) {
             int index = keyNode.eval(interpreter).toNumber(keyNode.getPosition()).intValue();
@@ -59,7 +59,7 @@ public class LookupNode extends Node {
     }
 
     public void set(Interpreter interpreter, ZemObject result) {
-        ZemObject var = interpreter.getVariable(varNode.getName());
+        ZemObject var = interpreter.getVariable(varNode.getName(), varNode.getPosition());
         ZemObject ret = null;
         if (var instanceof ZemArray) {
             int index = keyNode.eval(interpreter).toNumber(keyNode.getPosition()).intValue();
