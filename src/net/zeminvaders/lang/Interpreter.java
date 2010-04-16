@@ -86,9 +86,6 @@ public class Interpreter {
      * Import global variable into current scope
      */
     public void importGlobal(String name, SourcePosition pos) {
-        if (!globals.containsKey(name)) {
-            throw new UnsetVariableException(name, pos);
-        }
         globalImports.add(name);
     }
 
