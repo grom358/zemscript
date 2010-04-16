@@ -303,6 +303,8 @@ public class Lexer {
             return new Token(pos, TokenType.FUNCTION, word);
         } else if (word.equals("return")) {
             return new Token(pos, TokenType.RETURN, word);
+        } else if (word.equals("global")) {
+            return new Token(pos, TokenType.GLOBAL, word);
         } else {
             return new Token(pos, TokenType.VARIABLE, word);
         }

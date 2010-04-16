@@ -38,6 +38,7 @@ import net.zeminvaders.lang.ast.FalseNode;
 import net.zeminvaders.lang.ast.ForeachNode;
 import net.zeminvaders.lang.ast.FunctionCallNode;
 import net.zeminvaders.lang.ast.FunctionNode;
+import net.zeminvaders.lang.ast.GlobalNode;
 import net.zeminvaders.lang.ast.GreaterEqualOpNode;
 import net.zeminvaders.lang.ast.GreaterThenOpNode;
 import net.zeminvaders.lang.ast.Node;
@@ -117,6 +118,7 @@ public class Parser {
         // | VARIABLE! ASSIGN! expression END_STATEMENT
         // | RETURN expression END_STATEMENT
         // | IF | WHILE | FOR_EACH
+        // | GLOBAL VARIABLE!
         TokenType type = lookAhead(1);
         if (type == TokenType.VARIABLE && lookAhead(2) == TokenType.LPAREN) {
             Node funcCall = functionCall();
@@ -139,11 +141,26 @@ public class Parser {
             return _while();
         } else if (type == TokenType.FOR_EACH) {
             return foreach();
+        } else if (type == TokenType.GLOBAL) {
+            return global();
         } else {
             // We only get here if there is token from the lexer
             // that is not handled by parser yet.
             throw new ParserException("Unknown token type " + type);
         }
+    }
+
+    private Node global() {
+        // GLOBAL! VARIABLE! (COMMA^ VARIABLE!)* END_STATEMENT
+        SourcePosition pos = match(TokenType.GLOBAL).getPosition();
+        List<String> variableNames = new LinkedList<String>();
+        variableNames.add(match(TokenType.VARIABLE).getText());
+        while (lookAhead(1) == TokenType.COMMA) {
+            match(TokenType.COMMA);
+            variableNames.add(match(TokenType.VARIABLE).getText());
+        }
+        match(TokenType.END_STATEMENT);
+        return new GlobalNode(pos, variableNames);
     }
 
     private Node condition() {

@@ -28,8 +28,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.zeminvaders.lang.ast.RootNode;
 import net.zeminvaders.lang.runtime.ArrayPushFunction;
@@ -37,6 +39,7 @@ import net.zeminvaders.lang.runtime.Function;
 import net.zeminvaders.lang.runtime.LenFunction;
 import net.zeminvaders.lang.runtime.PrintFunction;
 import net.zeminvaders.lang.runtime.PrintLineFunction;
+import net.zeminvaders.lang.runtime.UserFunction;
 import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
@@ -47,20 +50,46 @@ import net.zeminvaders.lang.runtime.ZemObject;
  */
 public class Interpreter {
     /**
+     * Global symbolTable
+     */
+    private Map<String, ZemObject> globals = new HashMap<String, ZemObject>();
+
+    /**
+     * Tracks the variables using global scope as per global keyword
+     */
+    private Set<String> globalImports = new HashSet<String>();
+
+    /**
      * Map of variables to their objects
      */
-    private Map<String, ZemObject> symbolTable = new HashMap<String, ZemObject>();
+    private Map<String, ZemObject> symbolTable;
+
+    /**
+     * Map of functions to their symbol tables
+     */
+    private Map<String, Map<String, ZemObject>> functionBind = new HashMap<String, Map<String, ZemObject>>();
 
     /**
      * Setup interpreter with empty symbol table
      * and register built-in functions.
      */
     public Interpreter() {
+        symbolTable = globals;
         // Register built-in functions
         symbolTable.put("print", new PrintFunction());
         symbolTable.put("println", new PrintLineFunction());
         symbolTable.put("len", new LenFunction());
         symbolTable.put("array_push", new ArrayPushFunction());
+    }
+
+    /**
+     * Import global variable into current scope
+     */
+    public void importGlobal(String name, SourcePosition pos) {
+        if (!globals.containsKey(name)) {
+            throw new UnsetVariableException(name, pos);
+        }
+        globalImports.add(name);
     }
 
     /**
@@ -71,6 +100,9 @@ public class Interpreter {
      * @return The value of the variable
      */
     public ZemObject getVariable(String name, SourcePosition pos) {
+        if (globalImports.contains(name)) {
+            return globals.get(name);
+        }
         if (!symbolTable.containsKey(name)) {
             throw new UnsetVariableException(name, pos);
         }
@@ -84,7 +116,14 @@ public class Interpreter {
      * @param value New value for the variable
      */
     public void setVariable(String name, ZemObject value) {
+        if (globalImports.contains(name)) {
+            globals.put(name, value);
+            return;
+        }
         symbolTable.put(name, value);
+        if (value instanceof UserFunction) {
+            functionBind.put(name, symbolTable);
+        }
     }
 
     /**
@@ -109,9 +148,14 @@ public class Interpreter {
     public ZemObject callFunction(String functionName, List<ZemObject> args, SourcePosition pos) {
         Function function = (Function) symbolTable.get(functionName);
         // Save the symbolTable
-        Map<String, ZemObject> savedSymbolTable =
-            new HashMap<String, ZemObject>(symbolTable);
+        Map<String, ZemObject> savedSymbolTable = symbolTable;
+        Set<String> savedGlobalImports = globalImports;
         // Setup symbolTable for function
+        if (function instanceof UserFunction) {
+            symbolTable = functionBind.get(functionName);
+        }
+        symbolTable = new HashMap<String, ZemObject>(symbolTable);
+        globalImports = new HashSet<String>(globalImports);
         int noMissingArgs = 0;
         int noRequiredArgs = 0;
         for (int paramIndex = 0;
@@ -137,6 +181,7 @@ public class Interpreter {
         ZemObject ret = function.eval(this, pos);
         // Restore symbolTable
         symbolTable = savedSymbolTable;
+        globalImports = savedGlobalImports;
 
         return ret;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008 Cameron Zemek
+ * Copyright (c) 2010 Cameron Zemek
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -19,22 +19,44 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-package net.zeminvaders.lang;
+package net.zeminvaders.lang.ast;
+
+import java.util.List;
+
+import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.SourcePosition;
+import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
- * The type of token
+ * A variable.
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public enum TokenType {
-    COMMENT, ASSIGN,
-    GLOBAL, // Global keyword
-    PLUS, MINUS, MULTIPLY, DIVIDE, MOD, POWER, // Math operators
-    LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, COMMA, COLON, END_STATEMENT,
-    CONCAT, // String operators
-    NOT, AND, OR, // Boolean operators
-    LESS_THEN, LESS_EQUAL, EQUAL, GREATER_EQUAL, GREATER_THEN, NOT_EQUAL, // Comparison operators
-    NUMBER, STRING_LITERAL, TRUE, FALSE, // Constant types
-    IF, ELSE, WHILE, FOR_EACH, AS, // Control structures
-    VARIABLE, FUNCTION, RETURN // Other keywords
+public class GlobalNode extends Node {
+    private List<String> variableNames;
+
+    public GlobalNode(SourcePosition pos, List<String> variableNames) {
+        super(pos);
+        this.variableNames = variableNames;
+    }
+
+    @Override
+    public ZemObject eval(Interpreter interpreter) {
+        for (String variableName : variableNames) {
+            interpreter.importGlobal(variableName, getPosition());
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(global");
+        for (String variableName : variableNames) {
+            sb.append(' ');
+            sb.append(variableName);
+        }
+        sb.append(")");
+        return sb.toString();
+    }
 }
