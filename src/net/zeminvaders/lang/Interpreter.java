@@ -65,11 +65,6 @@ public class Interpreter {
     private Map<String, ZemObject> symbolTable;
 
     /**
-     * Map of functions to their symbol tables
-     */
-    private Map<String, Map<String, ZemObject>> functionBind = new HashMap<String, Map<String, ZemObject>>();
-
-    /**
      * Setup interpreter with empty symbol table
      * and register built-in functions.
      */
@@ -80,6 +75,13 @@ public class Interpreter {
         symbolTable.put("println", new PrintLineFunction());
         symbolTable.put("len", new LenFunction());
         symbolTable.put("array_push", new ArrayPushFunction());
+    }
+    
+    /**
+     * Used to get current symbol table. Used to bind symbol table to functions.
+     */
+    public Map<String, ZemObject> getSymbolTable() {
+        return symbolTable;
     }
 
     /**
@@ -118,10 +120,7 @@ public class Interpreter {
             return;
         }
         symbolTable.put(name, value);
-        if (value instanceof UserFunction) {
-            functionBind.put(name, symbolTable);
-        }
-    }
+    }        
 
     /**
      * Check that a function exists.
@@ -149,7 +148,7 @@ public class Interpreter {
         Set<String> savedGlobalImports = globalImports;
         // Setup symbolTable for function
         if (function instanceof UserFunction) {
-            symbolTable = functionBind.get(functionName);
+            symbolTable = ((UserFunction)function).getSymbolTable();
         }
         symbolTable = new HashMap<String, ZemObject>(symbolTable);
         globalImports = new HashSet<String>(globalImports);

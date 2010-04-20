@@ -67,7 +67,7 @@ public class FunctionNode extends Node {
             Parameter param = new Parameter(parameterName, parameterValue);
             params.add(param);
         }
-        return new UserFunction(params, body);
+        return new UserFunction(params, body, interpreter.getSymbolTable());
     }
 
     @Override

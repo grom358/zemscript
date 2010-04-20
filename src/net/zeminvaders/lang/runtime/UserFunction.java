@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.runtime;
 
 import java.util.List;
+import java.util.Map;
 
 import net.zeminvaders.lang.Interpreter;
 import net.zeminvaders.lang.SourcePosition;
@@ -32,17 +33,23 @@ import net.zeminvaders.lang.ast.Node;
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public class UserFunction extends Function {
+public class UserFunction extends Function {    
     private List<Parameter> parameters;
     private Node body;
+    private Map<String, ZemObject> symbolTable;
 
-    public UserFunction(List<Parameter> parameters, Node body) {
+    public UserFunction(List<Parameter> parameters, Node body, Map<String, ZemObject> symbolTable) {
         this.parameters = parameters;
         this.body = body;
+        this.symbolTable = symbolTable;
     }
 
     public Node getBody() {
         return body;
+    }
+    
+    public Map<String, ZemObject> getSymbolTable() {
+        return symbolTable;
     }
 
     @Override
