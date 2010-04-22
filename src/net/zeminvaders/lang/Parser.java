@@ -113,21 +113,28 @@ public class Parser {
     }
 
     private Node statement() {
-        // | (ID LPAREN) => functionCall  END_STATEMENT
+        // | functionCall END_STATEMENT
         // | VARIABLE! ASSIGN! expression END_STATEMENT
         // | RETURN expression END_STATEMENT
         // | IF | WHILE | FOR_EACH
         TokenType type = lookAhead(1);
-        if (type == TokenType.VARIABLE && lookAhead(2) == TokenType.LPAREN) {
-            Node funcCall = functionCall();
+        if (type == TokenType.FUNCTION) {
+            // Call to anonymous function
+            Node functionCall = functionCall(function());
             match(TokenType.END_STATEMENT);
-            return funcCall;
+            return functionCall;
         } else if (type == TokenType.VARIABLE) {
             Node var = variable();
-            SourcePosition pos = match(TokenType.ASSIGN).getPosition();
-            Node value = expression();
-            match(TokenType.END_STATEMENT);
-            return new AssignNode(pos, var, value);
+            if (lookAhead(1) == TokenType.LPAREN) {
+                Node functionCall = functionCall(var);
+                match(TokenType.END_STATEMENT);
+                return functionCall;
+            } else {
+                SourcePosition pos = match(TokenType.ASSIGN).getPosition();
+                Node value = expression();
+                match(TokenType.END_STATEMENT);
+                return new AssignNode(pos, var, value);
+            }
         } else if (type == TokenType.RETURN) {
             SourcePosition pos = match(TokenType.RETURN).getPosition();
             Node expression = expression();
@@ -295,7 +302,12 @@ public class Parser {
     private Node expression() {
         TokenType type = lookAhead(1);
         if (type == TokenType.FUNCTION) {
-            return function();
+            Node functionNode = function();
+            if (lookAhead(1) == TokenType.LPAREN) {
+                return functionCall(functionNode);
+            } else {
+                return functionNode;
+            }
         } else if (type == TokenType.LBRACKET) {
             return array();
         } else if (type == TokenType.LBRACE) {
@@ -363,7 +375,7 @@ public class Parser {
         } else if (lookAhead(1) == TokenType.PLUS) {
             match(TokenType.PLUS);
         }
-        Node value = value();
+        Node value = atom();
         if (signToken != null) {
             return new NegateOpNode(signToken.getPosition(), value);
         } else {
@@ -371,26 +383,31 @@ public class Parser {
         }
     }
 
-    private Node value() {
-        // (ID LPAREN) => functionCall | atom
-        if (lookAhead(1) == TokenType.VARIABLE && lookAhead(2) == TokenType.LPAREN) {
-            return functionCall();
-        } else {
-            return atom();
-        }
-    }
+    private Node functionCall(Node functionNode) {
+        // functionNode LPAREN! argumentList RPAREN! (LPAREN! argumentList RPAREN!)* )?
+        FunctionCallNode functionCall = null;
+        /*
+         * Since functions can return functions we want to handle calling
+         * the returned function. For example, f()(). To support this we
+         * handle additional calls (ie. LPAREN! argumentList RPAREN!) as
+         * a call to the returned function.
+         */
+        do {
+            SourcePosition pos = match(TokenType.LPAREN).getPosition();
+            List<Node> arguments = FunctionCallNode.NO_ARGUMENTS;
+            if (lookAhead(1) != TokenType.RPAREN) {
+                arguments = argumentList();
+            }
+            match(TokenType.RPAREN);
+            if (functionCall == null) {
+                functionCall = new FunctionCallNode(functionNode.getPosition(),
+                    functionNode, arguments);
+            } else {
+                functionCall = new FunctionCallNode(pos, functionCall, arguments);
+            }
+        } while (lookAhead(1) == TokenType.LPAREN);
 
-    private Node functionCall() {
-        // f:ID^ LPAREN! argumentList RPAREN!
-        Token functionToken = match(TokenType.VARIABLE);
-        String functionName = functionToken.getText();
-        match(TokenType.LPAREN);
-        List<Node> arguments = FunctionCallNode.NO_ARGUMENTS;
-        if (lookAhead(1) != TokenType.RPAREN) {
-            arguments = argumentList();
-        }
-        match(TokenType.RPAREN);
-        return new FunctionCallNode(functionToken.getPosition(), functionName, arguments);
+        return functionCall;
     }
 
     private List<Node> argumentList() {
@@ -423,7 +440,12 @@ public class Parser {
             match(TokenType.RPAREN);
             return atom;
         } else {
-            return variable();
+            Node var = variable();
+            if (lookAhead(1) == TokenType.LPAREN) {
+                return functionCall(var);
+            } else {
+                return var;
+            }
         }
     }
 

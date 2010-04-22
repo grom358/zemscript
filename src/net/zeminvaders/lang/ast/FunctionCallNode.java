@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.InvalidTypeException;
 import net.zeminvaders.lang.SourcePosition;
+import net.zeminvaders.lang.runtime.Function;
 import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
@@ -36,30 +38,45 @@ import net.zeminvaders.lang.runtime.ZemObject;
 public class FunctionCallNode extends Node {
     final static public List<Node> NO_ARGUMENTS = new ArrayList<Node>(0);
 
-    private String functionName;
+    private Node functionNode;
     private List<Node> arguments;
 
-    public FunctionCallNode(SourcePosition pos, String functionName, List<Node> arguments) {
+    public FunctionCallNode(SourcePosition pos, Node functionNode, List<Node> arguments) {
         super(pos);
-        this.functionName = functionName;
+        this.functionNode = functionNode;
         this.arguments = arguments;
+    }
+
+    private String getFunctionName() {
+        if (functionNode instanceof VariableNode) {
+            return ((VariableNode) functionNode).getName();
+        }
+        return null;
     }
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        interpreter.checkFunctionExists(functionName, getPosition());
+        ZemObject expression = functionNode.eval(interpreter);
+        if (!(expression instanceof Function)) {
+            throw new InvalidTypeException("Call to invalid function", getPosition());
+        }
+        Function function = (Function) expression;
         // Evaluate the arguments
         List<ZemObject> args = new ArrayList<ZemObject>(arguments.size());
         for (Node node : arguments) {
             args.add(node.eval(interpreter));
         }
-        return interpreter.callFunction(functionName, args, getPosition());
+        return interpreter.callFunction(function, args, getPosition(), getFunctionName());
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append('(');
+        String functionName = getFunctionName();
+        if (functionNode == null) {
+            functionName = "anon-func";
+        }
         sb.append(functionName);
         for (Node arg : arguments) {
             sb.append(' ');

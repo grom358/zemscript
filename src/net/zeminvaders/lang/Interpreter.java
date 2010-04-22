@@ -102,12 +102,13 @@ public class Interpreter {
     /**
      * Call a function.
      *
-     * @param functionName The function to call
+     * @param function The function to call
      * @param args List of arguments to pass to function
+     * @param pos  Position in source code of the function call
+     * @param functionName Name of the function. Null is passed for anonymous functions.
      * @return Return value from function
      */
-    public ZemObject callFunction(String functionName, List<ZemObject> args, SourcePosition pos) {
-        Function function = (Function) symbolTable.get(functionName);
+    public ZemObject callFunction(Function function, List<ZemObject> args, SourcePosition pos, String functionName) {
         // Save the symbolTable
         Map<String, ZemObject> savedSymbolTable =
             new HashMap<String, ZemObject>(symbolTable);
