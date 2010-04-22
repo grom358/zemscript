@@ -34,7 +34,8 @@ public class TooFewArgumentsException extends ZemException {
             int noArgsRequired,
             int noArgs,
             SourcePosition pos) {
-        super(functionName + " expects at least " + noArgsRequired
+        super("Function" + (functionName == null ? "" : " '" + functionName + "'")
+                + " expects at least " + noArgsRequired
                 + " arguments but got " + noArgs, pos);
     }
 }
