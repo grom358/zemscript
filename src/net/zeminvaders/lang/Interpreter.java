@@ -76,7 +76,7 @@ public class Interpreter {
         symbolTable.put("len", new LenFunction());
         symbolTable.put("array_push", new ArrayPushFunction());
     }
-    
+
     /**
      * Used to get current symbol table. Used to bind symbol table to functions.
      */
@@ -120,7 +120,7 @@ public class Interpreter {
             return;
         }
         symbolTable.put(name, value);
-    }        
+    }
 
     /**
      * Check that a function exists.
@@ -150,8 +150,9 @@ public class Interpreter {
         // Setup symbolTable for function
         if (function instanceof UserFunction) {
             symbolTable = ((UserFunction)function).getSymbolTable();
+        } else {
+            symbolTable = new HashMap<String, ZemObject>(symbolTable);
         }
-        symbolTable = new HashMap<String, ZemObject>(symbolTable);
         globalImports = new HashSet<String>(globalImports);
         int noMissingArgs = 0;
         int noRequiredArgs = 0;
