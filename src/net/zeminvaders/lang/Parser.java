@@ -377,9 +377,9 @@ public class Parser {
     private Node factor() {
         // signExpr (POW^ signExpr)*
         Node expression = signExpression();
-        while (lookAhead(1) == TokenType.POWER) {
+        if (lookAhead(1) == TokenType.POWER) {
             expression = new PowerOpNode(match(TokenType.POWER).getPosition(),
-                expression, signExpression());
+                expression, factor());
         }
         return expression;
     }
