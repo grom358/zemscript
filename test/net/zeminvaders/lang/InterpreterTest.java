@@ -148,4 +148,12 @@ public class InterpreterTest {
         // Test return
         assertResult("test = function() { i = 0; while (i < 9) { i = i + 1; if (i == 5) { return i; } } return i; }; x = test();", new ZemNumber("5"));
     }
+
+    @Test
+    public void testFunctionCall() {
+        assertResult("f = function() { return function() { return function() { return 'hello world'; }; }; }; x = f()()();", new ZemString("hello world"));
+        assertResult("function(msg) { println(msg); }('hello world');", new ZemString("hello world"));
+        assertResult("x = function(msg) { return msg; }('hello world');", new ZemString("hello world"));
+        assertResult("obj = { 'greet' : function() { return 'hello world'; } }; msg = obj['greet']();", new ZemString("hello world"));
+    }
 }
