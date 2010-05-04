@@ -21,7 +21,7 @@
  */
 package net.zeminvaders.lang.ast;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +46,7 @@ public class DictionaryNode extends Node {
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        Map<ZemObject, ZemObject> entries = new HashMap<ZemObject, ZemObject>(elements.size());
+        Map<ZemObject, ZemObject> entries = new LinkedHashMap<ZemObject, ZemObject>(elements.size());
         for (DictionaryEntryNode node : elements) {
             DictionaryEntry entry = (DictionaryEntry) node.eval(interpreter);
             entries.put(entry.getKey(), entry.getValue());
