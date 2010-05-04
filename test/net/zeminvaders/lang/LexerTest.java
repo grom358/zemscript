@@ -81,11 +81,24 @@ public class LexerTest {
         assertTokenType("69", TokenType.NUMBER);
         assertTokenType("0.01", TokenType.NUMBER);
         assertTokenType("12345678901234567890.1234567890", TokenType.NUMBER);
+        assertTokenType(".05", TokenType.NUMBER);
+        assertTokenType("3e10", TokenType.NUMBER);
+        assertTokenType("3e-10", TokenType.NUMBER);
+        assertTokenType("3e+10", TokenType.NUMBER);
+        assertTokenType(".05e-10", TokenType.NUMBER);
+        assertTokenType("3.04e10", TokenType.NUMBER);
+        assertTokenType("0E+7", TokenType.NUMBER);
     }
 
     @Test(expected = LexerException.class)
     public void testInvalidNumber() throws IOException {
         Lexer lexer = new Lexer(new StringReader("12.23.4"));
+        lexer.getNextToken();
+    }
+
+    @Test(expected = LexerException.class)
+    public void testInvalidFractionNumber() throws IOException {
+        Lexer lexer = new Lexer(new StringReader("12."));
         lexer.getNextToken();
     }
 

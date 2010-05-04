@@ -207,7 +207,7 @@ public class Lexer {
                 return matchStringLiteral((char) character);
             }
             default: {
-                if (character >= '0' && character <= '9') {
+                if (character == '.' || (character >= '0' && character <= '9')) {
                     return matchNumber();
                 } else if ((character >= 'A' && character <= 'Z') ||
                     (character >= 'a' && character <= 'z') ||
@@ -251,19 +251,49 @@ public class Lexer {
         return new Token(pos, TokenType.COMMENT, sb.toString());
     }
 
+    private void matchDigits(StringBuilder sb) {
+        int character = lookAhead(1);
+        while (character >= '0' && character <= '9') {
+            sb.append((char) character);
+            character = next();
+        }
+    }
+
     private Token matchNumber() {
         SourcePosition pos = new SourcePosition(lineNo, columnNo);
         StringBuilder sb = new StringBuilder();
-        boolean decimal = false;
         int character = lookAhead(1);
-        while ((character >= '0' && character <= '9') || character == '.') {
-            if (decimal && character == '.') {
-                throw new LexerException("Unexcepted '.' character", lineNo, columnNo);
-            } else if (character == '.') {
-                decimal = true;
-            }
-            sb.append((char) character);
+        // IntegerPart
+        if (character >= '0' && character <= '9') {
+            matchDigits(sb);
+            character = lookAhead(1);
+        }
+        // FractionPart
+        if (character == '.') {
+            sb.append('.');
             character = next();
+            if (character < '0' || character > '9') {
+                throw new LexerException("Unexpected '" + ((char) character) + "' character", lineNo, columnNo);
+            }
+            matchDigits(sb);
+            character = lookAhead(1);
+        }
+        // Exponent
+        if (character == 'e' || character == 'E') {
+            sb.append('e');
+            character = next();
+            if (character == '-' || character == '+') {
+                sb.append(character);
+                character = next();
+            }
+            if (character < '0' || character > '9') {
+                throw new LexerException("Unexpected '" + ((char) character) + "' character", lineNo, columnNo);
+            }
+            matchDigits(sb);
+        }
+        character = lookAhead(1);
+        if (character == '.' || character == 'e') {
+            throw new LexerException("Unexpected '" + ((char) character) + "' character", lineNo, columnNo);
         }
         return new Token(pos, TokenType.NUMBER, sb.toString());
     }

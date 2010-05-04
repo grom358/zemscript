@@ -152,7 +152,7 @@ public class InterpreterTest {
     @Test
     public void testFunctionCall() {
         assertResult("f = function() { return function() { return function() { return 'hello world'; }; }; }; x = f()()();", new ZemString("hello world"));
-        assertResult("function(msg) { println(msg); }('hello world');", new ZemString("hello world"));
+        assertResult("function(msg) { return msg; }('hello world');", new ZemString("hello world"));
         assertResult("x = function(msg) { return msg; }('hello world');", new ZemString("hello world"));
         assertResult("obj = { 'greet' : function() { return 'hello world'; } }; msg = obj['greet']();", new ZemString("hello world"));
     }
