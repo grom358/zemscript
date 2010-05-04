@@ -156,4 +156,28 @@ public class InterpreterTest {
         assertResult("x = function(msg) { return msg; }('hello world');", new ZemString("hello world"));
         assertResult("obj = { 'greet' : function() { return 'hello world'; } }; msg = obj['greet']();", new ZemString("hello world"));
     }
+
+    @Test
+    public void testScope() {
+        assertResult("x = 0; f = function() { return x; }; g= function() { x = 1; return f(); }; y = g();", new ZemNumber("0"));
+        // Test global scope
+        assertResult("global x; x = 0; f = function() { return x; }; g = function() { x = 1; return f(); }; y = g();", new ZemNumber("1"));
+    }
+
+    @Test
+    public void testClosure() {
+        assertResult("newCounter = function() { i = 0; return function() { i = i + 1; return i; }; };" +
+            "c1 = newCounter(); c2 = newCounter(); c1(); c1(); c2(); x = c1() + c2();", new ZemNumber("5"));
+        assertResult("test = function() { x = 1; return function() { return x; }; }; apply = function(f) { return f(); }; y = apply(test());", new ZemNumber("1"));
+    }
+
+    @Test
+    public void testGlobal() {
+        assertResult("x = 0; f = function() { x = 1; }; f(); y = x;", new ZemNumber("0")); // Non-global
+        assertResult("x = 0; f = function() { global x; x = 1; }; f(); y = x;", new ZemNumber("1"));
+        assertResult("x = 0; f = function() { x = 1; g = function() { global x; x = 2; }; g(); }; f(); y = x;", new ZemNumber("2"));
+        assertResult("x = 0; f = function() { global x; x = 2; }; f(); g = function() { x = 1; }; g(); y = x;", new ZemNumber("2"));
+        assertResult("f = function() { global msg; msg = 'hello world'; }; f(); y = msg;", new ZemString("hello world"));
+        assertResult("global x; x = 0; f = function() { x = 1; g = function() { x = 2; h = function() { x = 3; }; h(); }; g(); }; f(); y = x;", new ZemNumber("3"));
+    }
 }
