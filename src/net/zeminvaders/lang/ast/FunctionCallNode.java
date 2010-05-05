@@ -74,8 +74,8 @@ public class FunctionCallNode extends Node {
         StringBuilder sb = new StringBuilder();
         sb.append('(');
         String functionName = getFunctionName();
-        if (functionNode == null) {
-            functionName = "anon-func";
+        if (functionName == null) {
+            functionName = functionNode.toString();
         }
         sb.append(functionName);
         for (Node arg : arguments) {

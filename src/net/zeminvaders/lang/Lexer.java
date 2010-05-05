@@ -207,7 +207,7 @@ public class Lexer {
                 return matchStringLiteral((char) character);
             }
             default: {
-                if (character >= '0' && character <= '9') {
+                if (character == '.' || (character >= '0' && character <= '9')) {
                     return matchNumber();
                 } else if ((character >= 'A' && character <= 'Z') ||
                     (character >= 'a' && character <= 'z') ||
@@ -251,19 +251,119 @@ public class Lexer {
         return new Token(pos, TokenType.COMMENT, sb.toString());
     }
 
+    private int matchDigits(StringBuilder sb) {
+        int character = lookAhead(1);
+        int count = 0;
+        while (character >= '0' && character <= '9') {
+            sb.append((char) character);
+            character = next();
+            count++;
+        }
+        if (count == 0) {
+            throw new LexerException("Unexpected '" + ((char) character) + "' character", lineNo, columnNo);
+        }
+        return count;
+    }
+
+    private void matchDecimalNumber(StringBuilder sb) {
+        int character = lookAhead(1);
+        // IntegerPart
+        if (character >= '0' && character <= '9') {
+            matchDigits(sb);
+            character = lookAhead(1);
+        }
+        // FractionPart
+        if (character == '.') {
+            sb.append('.');
+            character = next();
+            matchDigits(sb);
+            character = lookAhead(1);
+        }
+        // Exponent
+        if (character == 'e' || character == 'E') {
+            sb.append('e');
+            character = next();
+            if (character == '-' || character == '+') {
+                sb.append(character);
+                character = next();
+            }
+            matchDigits(sb);
+        }
+    }
+
+    private int matchOctalDigits(StringBuilder sb) {
+        int character = lookAhead(1);
+        int count = 0;
+        while (character >= '0' && character <= '7') {
+            sb.append((char) character);
+            character = next();
+            count++;
+        }
+        if (count == 0) {
+            throw new LexerException("Unexpected '" + ((char) character) + "' character", lineNo, columnNo);
+        }
+        return count;
+    }
+
+    private int matchHexDigits(StringBuilder sb) {
+        int character = lookAhead(1);
+        int count = 0;
+        while ( (character >= '0' && character <= '9') ||
+                (character >= 'a' && character <= 'f') ||
+                (character >= 'A' && character <= 'F')) {
+            sb.append((char) character);
+            character = next();
+            count++;
+        }
+        if (count == 0) {
+            throw new LexerException("Unexpected '" + ((char) character) + "' character", lineNo, columnNo);
+        }
+        return count;
+    }
+
+    private int matchBinaryDigits(StringBuilder sb) {
+        int character = lookAhead(1);
+        int count = 0;
+        while (character == '0' || character == '1') {
+            sb.append((char) character);
+            character = next();
+            count++;
+        }
+        if (count == 0) {
+            throw new LexerException("Unexpected '" + ((char) character) + "' character", lineNo, columnNo);
+        }
+        return count;
+    }
+
     private Token matchNumber() {
         SourcePosition pos = new SourcePosition(lineNo, columnNo);
         StringBuilder sb = new StringBuilder();
-        boolean decimal = false;
+        int digit = lookAhead(1);
+        char secondDigit = (char) lookAhead(2);
+        if (digit == '0' && (secondDigit == 'o' || secondDigit == 'O')) {
+            sb.append(match('0'));
+            sb.append(match(secondDigit));
+            matchOctalDigits(sb);
+        } else if (digit == '0' && (secondDigit == 'x' || secondDigit == 'X')) {
+            sb.append(match('0'));
+            sb.append(match(secondDigit));
+            matchHexDigits(sb);
+        } else if (digit == '0' && (secondDigit == 'b' || secondDigit == 'B')) {
+            sb.append(match('0'));
+            sb.append(match(secondDigit));
+            matchBinaryDigits(sb);
+        } else {
+            matchDecimalNumber(sb);
+        }
+        /*
+         * Check that another number does not immediately follow as this means
+         * we have an invalid number. For example, the input 12.34.5 after the
+         * above code finishes leaves us with 12.34 matched. Without this
+         * check .5 will then be matched separately as another valid number.
+         */
         int character = lookAhead(1);
-        while ((character >= '0' && character <= '9') || character == '.') {
-            if (decimal && character == '.') {
-                throw new LexerException("Unexcepted '.' character", lineNo, columnNo);
-            } else if (character == '.') {
-                decimal = true;
-            }
-            sb.append((char) character);
-            character = next();
+        if (character == '.' || (character >= '0' && character <= '9')) {
+            throw new LexerException("Unexpected '" + ((char) character) + "' character", lineNo, columnNo);
         }
         return new Token(pos, TokenType.NUMBER, sb.toString());
     }

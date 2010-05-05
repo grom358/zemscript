@@ -128,6 +128,15 @@ public class ParserTest {
     }
 
     @Test
+    public void testAssociativity() {
+        assertSExpr("n = 1 + 2 + 3;", "(set! n (+ (+ 1 2) 3))");
+        assertSExpr("n = 1 - 2 - 3;", "(set! n (- (- 1 2) 3))");
+        assertSExpr("n = 1 * 2 * 3;", "(set! n (* (* 1 2) 3))");
+        assertSExpr("n = 1 / 2 / 3;", "(set! n (/ (/ 1 2) 3))");
+        assertSExpr("n = 4 ^ 3 ^ 2;", "(set! n (^ 4 (^ 3 2)))"); // Right associative
+    }
+
+    @Test
     public void testOperatorPrecedence() {
         assertSExpr("n = 1 - -2;", "(set! n (- 1 (- 2)))");
         assertSExpr("n = 2 + 2 * 3;", "(set! n (+ 2 (* 2 3)))");
@@ -159,5 +168,14 @@ public class ParserTest {
     @Test
     public void testFunction() {
         assertSExpr("add = function(a, b) { return a + b; };", "(set! add (function (a b) ((return (+ a b)))))");
+    }
+
+    @Test
+    public void testFunctionCall() {
+        assertSExpr("f = function(x) { return function(y) { return function(z) { return x + y + z; }; }; }; r = f(a)(b)(c);", "(set! f (function (x) ((return (function (y) ((return (function (z) ((return (+ (+ x y) z)))))))))))(set! r (((f a) b) c))");
+        assertSExpr("function(x) { return x; }(42);", "((function (x) ((return x))) 42)");
+        assertSExpr("y = function(x) { return x; }(42);", "(set! y ((function (x) ((return x))) 42))");
+        assertSExpr("arr = [function(x) { return x; }]; arr[0]();", "(set! arr '((function (x) ((return x))) ))((lookup arr 0))");
+        assertSExpr("obj = { 'f' : function(x) { return x; } }; y = obj['f']();", "(set! obj (dict (\"f\" (function (x) ((return x))))))(set! y ((lookup obj \"f\")))");
     }
 }

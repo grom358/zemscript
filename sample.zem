@@ -42,7 +42,7 @@ foreach (my_list as item) {
     println(item);
 }
 
-// Dictonary
+// Dictionary
 dict = {"fruit" : "apple", "veggie" : "pumpkin"};
 println("fruit: " ~ dict["fruit"]);
 dict["fruit"] = "orange";
