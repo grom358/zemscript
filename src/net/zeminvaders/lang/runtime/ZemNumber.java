@@ -21,6 +21,7 @@
  */
 package net.zeminvaders.lang.runtime;
 
+import java.math.BigInteger;
 import java.math.BigDecimal;
 
 /**
@@ -32,7 +33,19 @@ final public class ZemNumber extends ZemObject {
     private BigDecimal value;
 
     public ZemNumber(String value) {
-        this.value = new BigDecimal(value);
+        String prefix = "";
+        if (value.length() > 2) {
+            prefix = value.substring(0, 2).toLowerCase();
+        }
+        if (prefix.equals("0b")) {
+            this.value = new BigDecimal(new BigInteger(value.substring(2), 2));
+        } else if (prefix.equals("0o")) {
+            this.value = new BigDecimal(new BigInteger(value.substring(2), 8));
+        } else if (prefix.equals("0x")) {
+            this.value = new BigDecimal(new BigInteger(value.substring(2), 16));
+        } else {
+            this.value = new BigDecimal(value);
+        }
     }
 
     protected ZemNumber(BigDecimal value) {

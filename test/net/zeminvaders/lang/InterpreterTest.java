@@ -81,6 +81,23 @@ public class InterpreterTest {
     }
 
     @Test
+    public void testNumbers() {
+        // Hex digits
+        assertResult("x = 0xA;", new ZemNumber("10"));
+        assertResult("x = 0xB;", new ZemNumber("11"));
+        assertResult("x = 0xC;", new ZemNumber("12"));
+        assertResult("x = 0xD;", new ZemNumber("13"));
+        assertResult("x = 0xE;", new ZemNumber("14"));
+        assertResult("x = 0xF;", new ZemNumber("15"));
+        // Hex
+        assertResult("x = 0x3BE;", new ZemNumber("958"));
+        // Octal
+        assertResult("x = 0o52;", new ZemNumber("42"));
+        // Binary
+        assertResult("x = 0b101;", new ZemNumber("5"));
+    }
+
+    @Test
     public void testBooleanLogic() {
         assertResult("x = true && true;", ZemBoolean.TRUE);
         assertResult("x = false && true;", ZemBoolean.FALSE);

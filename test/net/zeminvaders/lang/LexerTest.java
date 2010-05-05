@@ -37,6 +37,16 @@ public class LexerTest {
         assertEquals(expected, actual);
     }
 
+    public void assertError(String code) throws IOException {
+        try {
+            Lexer lexer = new Lexer(new StringReader(code));
+            lexer.getNextToken();
+        } catch (LexerException e) {
+            return; // The test was successful, a LexerException was thrown.
+        }
+        fail("Expected LexerException");
+    }
+
     @Test
     public void testAssignOp() throws IOException {
         assertTokenType("=", TokenType.ASSIGN);
@@ -88,18 +98,23 @@ public class LexerTest {
         assertTokenType(".05e-10", TokenType.NUMBER);
         assertTokenType("3.04e10", TokenType.NUMBER);
         assertTokenType("0E+7", TokenType.NUMBER);
+        // Octal number
+        assertTokenType("0o12345670", TokenType.NUMBER);
+        assertTokenType("0O12345670", TokenType.NUMBER);
+        // Hex number
+        assertTokenType("0x1234567890ABCDEFabcdef", TokenType.NUMBER);
+        assertTokenType("0X1234567890ABCDEFabcdef", TokenType.NUMBER);
+        // Binary number
+        assertTokenType("0b101", TokenType.NUMBER);
+        assertTokenType("0B101", TokenType.NUMBER);
     }
 
-    @Test(expected = LexerException.class)
+    @Test
     public void testInvalidNumber() throws IOException {
-        Lexer lexer = new Lexer(new StringReader("12.23.4"));
-        lexer.getNextToken();
-    }
-
-    @Test(expected = LexerException.class)
-    public void testInvalidFractionNumber() throws IOException {
-        Lexer lexer = new Lexer(new StringReader("12."));
-        lexer.getNextToken();
+        assertError("12.23.4");
+        assertError("12.");
+        assertError("0o678");
+        assertError("0x");
     }
 
     @Test
