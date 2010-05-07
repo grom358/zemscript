@@ -22,7 +22,6 @@
 package net.zeminvaders.lang.ast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
@@ -68,7 +67,7 @@ public class FunctionNode extends Node {
             Parameter param = new Parameter(parameterName, parameterValue);
             params.add(param);
         }
-        return new UserFunction(params, body, new HashMap<String, ZemObject>(interpreter.getSymbolTable()));
+        return new UserFunction(params, body, interpreter.getSymbolTable());
     }
 
     @Override

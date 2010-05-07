@@ -22,10 +22,10 @@
 package net.zeminvaders.lang.runtime;
 
 import java.util.List;
-import java.util.Map;
 
 import net.zeminvaders.lang.Interpreter;
 import net.zeminvaders.lang.SourcePosition;
+import net.zeminvaders.lang.SymbolTable;
 import net.zeminvaders.lang.ast.Node;
 
 /**
@@ -36,9 +36,9 @@ import net.zeminvaders.lang.ast.Node;
 public class UserFunction extends Function {    
     private List<Parameter> parameters;
     private Node body;
-    private Map<String, ZemObject> symbolTable;
+    private SymbolTable symbolTable;
 
-    public UserFunction(List<Parameter> parameters, Node body, Map<String, ZemObject> symbolTable) {
+    public UserFunction(List<Parameter> parameters, Node body, SymbolTable symbolTable) {
         this.parameters = parameters;
         this.body = body;
         this.symbolTable = symbolTable;
@@ -48,7 +48,7 @@ public class UserFunction extends Function {
         return body;
     }
     
-    public Map<String, ZemObject> getSymbolTable() {
+    public SymbolTable getSymbolTable() {
         return symbolTable;
     }
 

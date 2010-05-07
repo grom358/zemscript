@@ -176,7 +176,7 @@ public class InterpreterTest {
 
     @Test
     public void testScope() {
-        assertResult("x = 0; f = function() { return x; }; g= function() { x = 1; return f(); }; y = g();", new ZemNumber("0"));
+        assertResult("x = 0; f = function() { return x; }; g = function() { x = 1; return f(); }; y = g();", new ZemNumber("0"));
         // Test global scope
         assertResult("global x; x = 0; f = function() { return x; }; g = function() { x = 1; return f(); }; y = g();", new ZemNumber("1"));
     }
@@ -186,6 +186,12 @@ public class InterpreterTest {
         assertResult("newCounter = function() { i = 0; return function() { i = i + 1; return i; }; };" +
             "c1 = newCounter(); c2 = newCounter(); c1(); c1(); c2(); x = c1() + c2();", new ZemNumber("5"));
         assertResult("test = function() { x = 1; return function() { return x; }; }; apply = function(f) { return f(); }; y = apply(test());", new ZemNumber("1"));
+    }
+    
+    @Test
+    public void testSharedVariableClosure() {
+    	assertResult("new = function() { x = 0; return { 'get' : function() { return x; }," +
+			"'set' : function(v) { x = v; } }; }; o = new(); o['set'](42); y = o['get']();", new ZemNumber("42"));
     }
 
     @Test

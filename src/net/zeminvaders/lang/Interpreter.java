@@ -27,10 +27,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.zeminvaders.lang.ast.RootNode;
@@ -50,37 +48,29 @@ import net.zeminvaders.lang.runtime.ZemObject;
  */
 public class Interpreter {
     /**
-     * Global symbolTable
-     */
-    private Map<String, ZemObject> globals = new HashMap<String, ZemObject>();
-
-    /**
      * Tracks the variables using global scope as per global keyword
      */
     private Set<String> globalImports = new HashSet<String>();
 
-    /**
-     * Map of variables to their objects
-     */
-    private Map<String, ZemObject> symbolTable;
+    private SymbolTable symbolTable;
 
     /**
      * Setup interpreter with empty symbol table
      * and register built-in functions.
      */
     public Interpreter() {
-        symbolTable = globals;
+        symbolTable = SymbolTable.GLOBALS;
         // Register built-in functions
-        symbolTable.put("print", new PrintFunction());
-        symbolTable.put("println", new PrintLineFunction());
-        symbolTable.put("len", new LenFunction());
-        symbolTable.put("array_push", new ArrayPushFunction());
+        symbolTable.set("print", new PrintFunction());
+        symbolTable.set("println", new PrintLineFunction());
+        symbolTable.set("len", new LenFunction());
+        symbolTable.set("array_push", new ArrayPushFunction());
     }
 
     /**
      * Used to get current symbol table. Used to bind symbol table to functions.
      */
-    public Map<String, ZemObject> getSymbolTable() {
+    public SymbolTable getSymbolTable() {
         return symbolTable;
     }
 
@@ -100,12 +90,9 @@ public class Interpreter {
      */
     public ZemObject getVariable(String name, SourcePosition pos) {
         if (globalImports.contains(name)) {
-            return globals.get(name);
+            return SymbolTable.GLOBALS.get(name, pos);
         }
-        if (!symbolTable.containsKey(name)) {
-            throw new UnsetVariableException(name, pos);
-        }
-        return symbolTable.get(name);
+        return symbolTable.get(name, pos);
     }
 
     /**
@@ -114,12 +101,12 @@ public class Interpreter {
      * @param name  Variable name
      * @param value New value for the variable
      */
-    public void setVariable(String name, ZemObject value) {
+    public void setVariable(String name, ZemObject value) {    	
         if (globalImports.contains(name)) {
-            globals.put(name, value);
-            return;
+        	SymbolTable.GLOBALS.set(name, value);
+        } else {
+        	symbolTable.set(name, value);
         }
-        symbolTable.put(name, value);
     }
 
     /**
@@ -144,15 +131,14 @@ public class Interpreter {
      * @return Return value from function
      */
     public ZemObject callFunction(Function function, List<ZemObject> args, SourcePosition pos, String functionName) {
-        // Save the symbolTable
-        Map<String, ZemObject> savedSymbolTable = symbolTable;
+    	// Save the symbolTable
+    	SymbolTable savedSymbolTable = symbolTable;
         Set<String> savedGlobalImports = globalImports;
         // Setup symbolTable for function
         if (function instanceof UserFunction) {
             symbolTable = ((UserFunction)function).getSymbolTable();
-        } else {
-            symbolTable = new HashMap<String, ZemObject>(symbolTable);
         }
+        symbolTable = new SymbolTable(symbolTable);
         globalImports = new HashSet<String>(globalImports);
         int noMissingArgs = 0;
         int noRequiredArgs = 0;
@@ -180,7 +166,6 @@ public class Interpreter {
         // Restore symbolTable
         symbolTable = savedSymbolTable;
         globalImports = savedGlobalImports;
-
         return ret;
     }
 
