@@ -27,17 +27,17 @@ import net.zeminvaders.lang.runtime.ZemBoolean;
 import net.zeminvaders.lang.runtime.ZemObject;
 
 /**
- * Greater then (>) operator.
+ * Less then (<) operator.
  *
  * @author <a href="mailto:grom@zeminvaders.net">Cameron Zemek</a>
  */
-public class GreaterThenOpNode extends RelationalOpNode {
-    public GreaterThenOpNode(SourcePosition pos, Node left, Node right) {
-        super(pos, ">", left, right);
+public class LessThanOpNode extends RelationalOpNode {
+    public LessThanOpNode(SourcePosition pos, Node left, Node right) {
+        super(pos, "<", left, right);
     }
 
     @Override
     public ZemObject eval(Interpreter interpreter) {
-        return ZemBoolean.valueOf(compare(interpreter) > 0);
+        return ZemBoolean.valueOf(compare(interpreter) < 0);
     }
 }
