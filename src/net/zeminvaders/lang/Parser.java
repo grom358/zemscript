@@ -40,11 +40,11 @@ import net.zeminvaders.lang.ast.FunctionCallNode;
 import net.zeminvaders.lang.ast.FunctionNode;
 import net.zeminvaders.lang.ast.GlobalNode;
 import net.zeminvaders.lang.ast.GreaterEqualOpNode;
-import net.zeminvaders.lang.ast.GreaterThenOpNode;
+import net.zeminvaders.lang.ast.GreaterThanOpNode;
 import net.zeminvaders.lang.ast.Node;
 import net.zeminvaders.lang.ast.IfNode;
 import net.zeminvaders.lang.ast.LessEqualOpNode;
-import net.zeminvaders.lang.ast.LessThenOpNode;
+import net.zeminvaders.lang.ast.LessThanOpNode;
 import net.zeminvaders.lang.ast.LookupNode;
 import net.zeminvaders.lang.ast.ModOpNode;
 import net.zeminvaders.lang.ast.MultiplyOpNode;
@@ -513,13 +513,13 @@ public class Parser {
             return new LessEqualOpNode(match(TokenType.LESS_EQUAL).getPosition(),
                 sumExpr, sumExpression());
         } else if (type == TokenType.LESS_THEN) {
-            return new LessThenOpNode(match(TokenType.LESS_THEN).getPosition(),
+            return new LessThanOpNode(match(TokenType.LESS_THEN).getPosition(),
                 sumExpr, sumExpression());
         } else if (type == TokenType.GREATER_EQUAL) {
             return new GreaterEqualOpNode(match(TokenType.GREATER_EQUAL).getPosition(),
                 sumExpr, sumExpression());
         } else if (type == TokenType.GREATER_THEN) {
-            return new GreaterThenOpNode(match(TokenType.GREATER_THEN).getPosition(),
+            return new GreaterThanOpNode(match(TokenType.GREATER_THEN).getPosition(),
                 sumExpr, sumExpression());
         } else if (type == TokenType.EQUAL) {
             return new EqualsOpNode(match(TokenType.EQUAL).getPosition(),
