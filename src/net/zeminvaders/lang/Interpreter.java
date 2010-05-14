@@ -30,7 +30,9 @@ import java.io.StringReader;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import net.zeminvaders.lang.ast.FunctionNode;
 import net.zeminvaders.lang.ast.RootNode;
@@ -56,6 +58,7 @@ public class Interpreter {
 
     private SymbolTable globals = new SymbolTable();
     private SymbolTable symbolTable;
+    private Map<FunctionNode, Collection<String>> upvalCache = new WeakHashMap<FunctionNode, Collection<String>>();
 
     /**
      * Setup interpreter with empty symbol table
@@ -79,10 +82,13 @@ public class Interpreter {
     		// variables from
     		return new SymbolTable(globals, symbolTable);
     	}
-        Collection<String> upvals;
-        ScopeInfo scope = new ScopeInfo(globalImports, symbolTable.getNames());
-        function.resolveScope(scope);
-        upvals = scope.getUpvals();
+        Collection<String> upvals = upvalCache.get(function);
+        if (upvals == null) {
+        	ScopeInfo scope = new ScopeInfo(globalImports, symbolTable.getNames());
+        	function.resolveScope(scope);
+        	upvals = scope.getUpvals();
+        	upvalCache.put(function, upvals);
+        }
         return new SymbolTable(globals, symbolTable, upvals);
     }
 
