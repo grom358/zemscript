@@ -189,6 +189,12 @@ public class InterpreterTest {
     }
     
     @Test
+    public void testClosureParameter() {
+    	assertResult("create = function() { x = 40;	f = function() { return function(y = x) { " +
+    			"return y; }; }; return f(); }; g = create(); y = g() + g(2);", new ZemNumber("42"));
+    }
+    
+    @Test
     public void testSharedVariableClosure() {
     	assertResult("new = function() { x = 0; return { 'get' : function() { return x; }," +
 			"'set' : function(v) { x = v; } }; }; o = new(); o['set'](42); y = o['get']();", new ZemNumber("42"));

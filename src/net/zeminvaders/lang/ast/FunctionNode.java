@@ -56,8 +56,10 @@ public class FunctionNode extends Node {
                 String parameterName = ((VariableNode) node).getName();
                 functionScope.markLocal(parameterName);
             } else if (node instanceof AssignNode) {
-                String parameterName = ((VariableNode) ((AssignNode) node).getLeft()).getName();
+            	AssignNode assignNode = (AssignNode) node;
+                String parameterName = ((VariableNode) assignNode.getLeft()).getName();                
                 functionScope.markLocal(parameterName);
+                assignNode.getRight().resolveScope(functionScope);
             } else {
                 // This error should not occur
                 throw new RuntimeException("Invalid function");
