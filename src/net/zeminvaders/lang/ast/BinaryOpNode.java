@@ -21,6 +21,7 @@
  */
 package net.zeminvaders.lang.ast;
 
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 
 /**
@@ -63,6 +64,12 @@ public abstract class BinaryOpNode extends Node {
      */
     public Node getRight() {
         return right;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        left.resolveScope(scope);
+        right.resolveScope(scope);
     }
 
     @Override

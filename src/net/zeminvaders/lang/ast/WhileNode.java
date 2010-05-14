@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -46,6 +47,12 @@ public class WhileNode extends Node {
 
     public Node getLoopBody() {
         return loopBody;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        testCondition.resolveScope(scope);
+        loopBody.resolveScope(scope);
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.Parameter;
 import net.zeminvaders.lang.runtime.UserFunction;
@@ -48,6 +49,25 @@ public class FunctionNode extends Node {
     }
 
     @Override
+    public void resolveScope(ScopeInfo scope) {
+        ScopeInfo functionScope = new ScopeInfo(scope);
+        for (Node node : parameters) {
+            if (node instanceof VariableNode) {
+                String parameterName = ((VariableNode) node).getName();
+                functionScope.markLocal(parameterName);
+            } else if (node instanceof AssignNode) {
+                String parameterName = ((VariableNode) ((AssignNode) node).getLeft()).getName();
+                functionScope.markLocal(parameterName);
+            } else {
+                // This error should not occur
+                throw new RuntimeException("Invalid function");
+            }
+        }
+        body.resolveScope(functionScope);
+        scope.endScope(functionScope);
+    }
+
+    @Override
     public ZemObject eval(Interpreter interpreter) {
         List<Parameter> params = new ArrayList<Parameter>(parameters.size());
         for (Node node : parameters) {
@@ -67,7 +87,7 @@ public class FunctionNode extends Node {
             Parameter param = new Parameter(parameterName, parameterValue);
             params.add(param);
         }
-        return new UserFunction(params, body, interpreter.getSymbolTable());
+        return new UserFunction(params, body, interpreter.createSymbolTable(this));
     }
 
     @Override

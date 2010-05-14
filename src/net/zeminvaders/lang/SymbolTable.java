@@ -21,53 +21,103 @@
  */
 package net.zeminvaders.lang;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.zeminvaders.lang.runtime.ZemObject;
 
+/**
+ * A mapping of variable names and their values. The values are accessed via
+ * a pointer class (Variable) so that symbol tables can share variables.
+ */
 public class SymbolTable {
-	public static SymbolTable GLOBALS = new SymbolTable(null);
+    /**
+     * Reference to global SymbolTable. Null if this is the global SymbolTable
+     */
+	private SymbolTable global;
 	
 	/**
-	 * Local symbols
+	 * Variables in use by this symbol table.
 	 */
-	private Map<String, ZemObject> local = new HashMap<String, ZemObject>();
-	
-	private SymbolTable parent;
-	
-	public SymbolTable(SymbolTable parent) {
-		this.parent = parent;
-	}
-	
+	private Map<String, Variable> bindings;
+
 	/**
-	 * Find table containing variable
-	 * @param name Name of variable
-	 * @return SymbolTable with variable. Returns null if no table found.
+	 * Create global symbol table
 	 */
-	private SymbolTable findTable(String name) {
-		if (local.containsKey(name)) {
-			return this;
-		} else if (parent != null) {
-			return parent.findTable(name);
-		} else {
-			return null;
-		}
+	public SymbolTable() {
+	    global = null;
+	    bindings = new HashMap<String, Variable>();
 	}
-	
+
+	/**
+	 * Create a symbol table from parent. This is basically a copy constructor,
+	 * except we don't copy from the global table.
+	 * @param global Global symbol table
+	 * @param parent Symbol table to copy from
+	 */
+	public SymbolTable(SymbolTable global, SymbolTable parent) {
+	    this.global = global;
+        // Import variables from parent, unless the parent is the global symbol
+	    // table. We don't copy from the global symbol table since the
+	    // global table is always used for finding a variable if no
+	    // local binding is found
+        if (parent != null && parent != global) {
+            bindings = new HashMap<String, Variable>(parent.bindings);
+        } else {
+            bindings = new HashMap<String, Variable>();
+        }
+	}
+
+	/**
+	 * Create a symbol table with captured variables. Used to create a closure.
+	 * @param global Global symbol table
+	 * @param parent Symbol table of parent
+	 * @param upvals Names of variables that are captured by this closure
+	 */
+	public SymbolTable(SymbolTable global, SymbolTable parent, Collection<String> upvals) {
+	    this.global = global;
+	    bindings = new HashMap<String, Variable>();
+	    if (parent != null && parent != global) {
+            for (String variableName : upvals) {
+                if (parent.bindings.containsKey(variableName)) {
+                    bindings.put(variableName, parent.bindings.get(variableName));
+                }
+            }
+        }
+	}
+
 	public void set(String name, ZemObject value) {
-		SymbolTable table = findTable(name);
-		if (table == GLOBALS || table == null) {
-			table = this;
-		}
-		table.local.put(name, value);
+        if (bindings.containsKey(name)) {
+            bindings.get(name).setValue(value);
+        } else {
+            bindings.put(name, new Variable(value));
+        }
 	}
-	
+
 	public ZemObject get(String name, SourcePosition pos) {
-		SymbolTable table = findTable(name);
-		if (table == null) {
-			throw new UnsetVariableException(name, pos);
-		}
-		return table.local.get(name);
+        if (!bindings.containsKey(name)) {
+            if (global != null) {
+                return global.get(name, pos);
+            }
+            throw new UnsetVariableException(name, pos);
+        }
+        return bindings.get(name).getValue();
 	}
+
+	public Collection<String> getNames() {
+	    return bindings.keySet();
+	}
+
+	@Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder();
+	    for (Map.Entry<String, Variable> entry : bindings.entrySet()) {
+	        sb.append(entry.getKey());
+	        sb.append(" => ");
+	        sb.append(entry.getValue());
+	        sb.append('\n');
+	    }
+	    return sb.toString();
+    }
 }

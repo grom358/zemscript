@@ -21,6 +21,7 @@
  */
 package net.zeminvaders.lang.ast;
 
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 
 /**
@@ -50,6 +51,11 @@ public abstract class UnaryOpNode extends Node {
      */
     public Node getOperand() {
         return operand;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        operand.resolveScope(scope);
     }
 
     @Override

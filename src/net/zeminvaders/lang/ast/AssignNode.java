@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.InvalidTypeException;
 import net.zeminvaders.lang.runtime.ZemObject;
@@ -34,6 +35,18 @@ import net.zeminvaders.lang.runtime.ZemObject;
 public class AssignNode extends BinaryOpNode {
     public AssignNode(SourcePosition pos, Node var, Node expression) {
         super(pos, "set!", var, expression);
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        getRight().resolveScope(scope);
+        Node left = getLeft();
+        if (left instanceof VariableNode) {
+            String name = ((VariableNode) left).getName();
+            scope.writeVariable(name);
+        } else {
+            left.resolveScope(scope);
+        }
     }
 
     @Override

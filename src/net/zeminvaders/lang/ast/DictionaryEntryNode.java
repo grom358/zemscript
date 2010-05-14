@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.DictionaryEntry;
 import net.zeminvaders.lang.runtime.ZemObject;
@@ -47,6 +48,12 @@ public class DictionaryEntryNode extends Node {
 
     public Node getValue() {
         return value;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        key.resolveScope(scope);
+        value.resolveScope(scope);
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemArray;
 import net.zeminvaders.lang.runtime.ZemObject;
@@ -40,6 +41,13 @@ public class ArrayNode extends Node {
     public ArrayNode(SourcePosition pos, List<Node> elements) {
         super(pos);
         this.elements = elements;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        for (Node node : elements) {
+            node.resolveScope(scope);
+        }
     }
 
     @Override

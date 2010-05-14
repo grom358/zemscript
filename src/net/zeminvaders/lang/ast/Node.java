@@ -21,6 +21,7 @@
  */
 package net.zeminvaders.lang.ast;
 
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.Interpreter;
 import net.zeminvaders.lang.runtime.ZemObject;
@@ -39,6 +40,14 @@ public abstract class Node {
 
     public SourcePosition getPosition() {
         return position;
+    }
+
+    /**
+     * Find information about the Node's scope. Used by the Interpreter to
+     * find which variables are captured by a closure.
+     * @param scope Add information to this scope
+     */
+    public void resolveScope(ScopeInfo scope) {
     }
 
     abstract public ZemObject eval(Interpreter interpreter);

@@ -27,10 +27,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.zeminvaders.lang.ast.FunctionNode;
 import net.zeminvaders.lang.ast.RootNode;
 import net.zeminvaders.lang.runtime.ArrayPushFunction;
 import net.zeminvaders.lang.runtime.Function;
@@ -52,6 +54,7 @@ public class Interpreter {
      */
     private Set<String> globalImports = new HashSet<String>();
 
+    private SymbolTable globals = new SymbolTable();
     private SymbolTable symbolTable;
 
     /**
@@ -59,7 +62,7 @@ public class Interpreter {
      * and register built-in functions.
      */
     public Interpreter() {
-        symbolTable = SymbolTable.GLOBALS;
+        symbolTable = globals;
         // Register built-in functions
         symbolTable.set("print", new PrintFunction());
         symbolTable.set("println", new PrintLineFunction());
@@ -68,10 +71,19 @@ public class Interpreter {
     }
 
     /**
-     * Used to get current symbol table. Used to bind symbol table to functions.
+     * Setup symbol table for function
      */
-    public SymbolTable getSymbolTable() {
-        return symbolTable;
+    public SymbolTable createSymbolTable(FunctionNode function) {
+    	if (symbolTable == globals) {
+    		// Top level functions don't have any outer function to capture
+    		// variables from
+    		return new SymbolTable(globals, symbolTable);
+    	}
+        Collection<String> upvals;
+        ScopeInfo scope = new ScopeInfo(globalImports, symbolTable.getNames());
+        function.resolveScope(scope);
+        upvals = scope.getUpvals();
+        return new SymbolTable(globals, symbolTable, upvals);
     }
 
     /**
@@ -90,7 +102,7 @@ public class Interpreter {
      */
     public ZemObject getVariable(String name, SourcePosition pos) {
         if (globalImports.contains(name)) {
-            return SymbolTable.GLOBALS.get(name, pos);
+            return globals.get(name, pos);
         }
         return symbolTable.get(name, pos);
     }
@@ -101,23 +113,11 @@ public class Interpreter {
      * @param name  Variable name
      * @param value New value for the variable
      */
-    public void setVariable(String name, ZemObject value) {    	
+    public void setVariable(String name, ZemObject value) {
         if (globalImports.contains(name)) {
-        	SymbolTable.GLOBALS.set(name, value);
+        	globals.set(name, value);
         } else {
         	symbolTable.set(name, value);
-        }
-    }
-
-    /**
-     * Check that a function exists.
-     *
-     * @param functionName Function to check.
-     */
-    public void checkFunctionExists(String functionName, SourcePosition pos) {
-        ZemObject symbol = getVariable(functionName, pos);
-        if (!(symbol instanceof Function)) {
-            throw new InvalidTypeException(functionName + " is not a function", pos);
         }
     }
 
@@ -138,7 +138,7 @@ public class Interpreter {
         if (function instanceof UserFunction) {
             symbolTable = ((UserFunction)function).getSymbolTable();
         }
-        symbolTable = new SymbolTable(symbolTable);
+        symbolTable = new SymbolTable(globals, symbolTable);
         globalImports = new HashSet<String>(globalImports);
         int noMissingArgs = 0;
         int noRequiredArgs = 0;

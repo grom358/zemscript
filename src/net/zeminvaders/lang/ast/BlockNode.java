@@ -24,6 +24,7 @@ package net.zeminvaders.lang.ast;
 import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -46,6 +47,13 @@ public class BlockNode extends Node {
 
     protected List<Node> getStatements() {
         return statements;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        for (Node statement : statements) {
+            statement.resolveScope(scope);
+        }
     }
 
     @Override

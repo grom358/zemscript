@@ -26,6 +26,7 @@ import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
 import net.zeminvaders.lang.InvalidTypeException;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.Function;
 import net.zeminvaders.lang.runtime.ZemObject;
@@ -52,6 +53,14 @@ public class FunctionCallNode extends Node {
             return ((VariableNode) functionNode).getName();
         }
         return null;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        functionNode.resolveScope(scope);
+        for (Node node : arguments) {
+            node.resolveScope(scope);
+        }
     }
 
     @Override

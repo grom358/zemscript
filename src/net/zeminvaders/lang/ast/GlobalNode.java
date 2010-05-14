@@ -24,6 +24,7 @@ package net.zeminvaders.lang.ast;
 import java.util.List;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -38,6 +39,13 @@ public class GlobalNode extends Node {
     public GlobalNode(SourcePosition pos, List<String> variableNames) {
         super(pos);
         this.variableNames = variableNames;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        for (String variableName : variableNames) {
+            scope.markGlobal(variableName);
+        }
     }
 
     @Override

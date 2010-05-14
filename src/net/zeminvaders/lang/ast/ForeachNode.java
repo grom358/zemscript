@@ -24,6 +24,7 @@ package net.zeminvaders.lang.ast;
 import java.util.Map;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.InvalidTypeException;
 import net.zeminvaders.lang.runtime.Dictionary;
@@ -45,6 +46,21 @@ public class ForeachNode extends Node {
         this.onVariableNode = onVariableNode;
         this.asNode = asNode;
         this.loopBody = loopBody;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        onVariableNode.resolveScope(scope);
+        if (asNode instanceof DictionaryEntryNode) {
+            DictionaryEntryNode entryNode = (DictionaryEntryNode) asNode;
+            String keyName = ((VariableNode) entryNode.getKey()).getName();
+            String valueName = ((VariableNode) entryNode.getValue()).getName();
+            scope.markLocal(keyName);
+            scope.markLocal(valueName);
+        } else {
+            scope.markLocal(((VariableNode) asNode).getName());
+        }
+        loopBody.resolveScope(scope);
     }
 
     @Override

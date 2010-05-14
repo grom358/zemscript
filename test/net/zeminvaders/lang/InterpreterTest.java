@@ -203,4 +203,9 @@ public class InterpreterTest {
         assertResult("f = function() { global msg; msg = 'hello world'; }; f(); y = msg;", new ZemString("hello world"));
         assertResult("global x; x = 0; f = function() { x = 1; g = function() { x = 2; h = function() { x = 3; }; h(); }; g(); }; f(); y = x;", new ZemNumber("3"));
     }
+    
+    @Test
+    public void testRecursive() {
+    	assertResult("fact = function(n) { if (n == 1 || n == 0) { return 1; } return n * fact(n - 1); }; y = fact(6);", new ZemNumber("720"));
+    }
 }

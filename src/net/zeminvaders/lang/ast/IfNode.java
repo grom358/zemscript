@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemBoolean;
 import net.zeminvaders.lang.runtime.ZemObject;
@@ -53,6 +54,15 @@ public class IfNode extends Node {
 
     public Node getElseBlock() {
         return elseBlock;
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        testCondition.resolveScope(scope);
+        thenBlock.resolveScope(scope);
+        if (elseBlock != null) {
+            elseBlock.resolveScope(scope);
+        }
     }
 
     @Override

@@ -22,6 +22,7 @@
 package net.zeminvaders.lang.ast;
 
 import net.zeminvaders.lang.Interpreter;
+import net.zeminvaders.lang.ScopeInfo;
 import net.zeminvaders.lang.SourcePosition;
 import net.zeminvaders.lang.runtime.ZemObject;
 
@@ -45,6 +46,11 @@ public class VariableNode extends Node {
     @Override
     public String toString() {
         return getName();
+    }
+
+    @Override
+    public void resolveScope(ScopeInfo scope) {
+        scope.readVariable(name);
     }
 
     @Override
