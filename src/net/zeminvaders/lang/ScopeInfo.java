@@ -73,6 +73,8 @@ public class ScopeInfo {
 	public void writeVariable(String name) {
 		if (global.contains(name)) {
 			// Do nothing
+		} else if (local.contains(name)) {
+			// Set existing variable
 		} else if (outer.contains(name)) {
 			// Capture as an upval
 			upvals.add(name);
