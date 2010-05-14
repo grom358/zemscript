@@ -41,7 +41,11 @@ public class ScopeInfo {
 	 * @param scope Inner scope
 	 */
 	public void endScope(ScopeInfo scope) {
-		upvals.addAll(scope.upvals);
+		for (String name : scope.upvals) {
+			if (!local.contains(name)) {
+				upvals.add(name);
+			}
+		}
 	}
 	
 	public void markGlobal(String name) {
